@@ -1,1 +1,1 @@
-# Source code for the Eiger project oF the EPFL rocket team
+# Source code for the Eiger project of the EPFL rocket team
