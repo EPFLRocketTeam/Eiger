@@ -1,3 +1,0 @@
-data_logger.c:20:5:do_something_SD	56	static
-data_logger.c:75:5:init_SD	16	static
-data_logger.c:108:5:log_SD	8	static
