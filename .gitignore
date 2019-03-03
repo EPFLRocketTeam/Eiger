@@ -1,0 +1,8 @@
+Debug/ 
+.osx.* 
+.settings/ 
+mx.scratch 
+.mxproject 
+*.cfg 
+html/
+.DS_Store
