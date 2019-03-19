@@ -57,6 +57,8 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */     
 #include "led.h"
+#include "usart.h"
+#include <string.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -84,7 +86,11 @@ osThreadId task_s2Handle;
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
-   
+void debugPrintln(UART_HandleTypeDef *huart, char _out[]){
+       HAL_UART_Transmit(huart, (uint8_t *) _out, strlen(_out), 10);
+       char newline[2] = "\r\n";
+       HAL_UART_Transmit(huart, (uint8_t *) newline, 2, 10);
+}
 /* USER CODE END FunctionPrototypes */
 
 void StartDefaultTask(void const * argument);
@@ -152,14 +158,38 @@ void StartDefaultTask(void const * argument)
 
   /* USER CODE BEGIN StartDefaultTask */
   /* Infinite loop */
+  uint8_t c;
   for(;;)
   {
+	  if (HAL_UART_Receive (&huart6, &c, 1, 0) == HAL_OK) {
+		  HAL_UART_Transmit(&huart3, &c, 1, 100);
+		  led_set_rgb(0,  0,  1000);
+	  }
+
+
+	  if (HAL_UART_Receive (&huart1, &c, 1, 0) == HAL_OK) {
+		  HAL_UART_Transmit(&huart3, &c, 1, 100);
+		  led_set_rgb(0,  1000,  0);
+
+	  }
+
+	  if (HAL_UART_Receive (&huart3, &c, 1, 0) == HAL_OK) {
+		  HAL_UART_Transmit(&huart6, &c, 1, 0);
+		  HAL_UART_Transmit(&huart1, &c, 1, 0);
+		  led_set_rgb(1000,  0,  0);
+	  }
+
+
+	  //debugPrintln(&huart3, "Hello world");
+      //osDelay(1000);
 	  led_set_rgb(50,  0,  0);
-	  osDelay(100);
-	  led_set_rgb( 0, 50,  0);
-	  osDelay(100);
-	  led_set_rgb( 0,  0, 50);
-	  osDelay(100);
+	  //osDelay(100);
+	  //led_set_rgb( 0, 50,  0);
+	  //osDelay(100);
+	  //led_set_rgb( 0,  0, 50);
+	  //osDelay(100);
+
+
   }
   /* USER CODE END StartDefaultTask */
 }
