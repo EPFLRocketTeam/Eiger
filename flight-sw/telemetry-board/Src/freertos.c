@@ -162,9 +162,6 @@ void MX_FREERTOS_Init(void) {
   /* add threads, ... */
   osThreadDef(xBeeTelemetry, TK_xBeeTelemetry, osPriorityNormal, 0, 128);
   xBeeTelemetryHandle = osThreadCreate(osThread(xBeeTelemetry), NULL);
-
-  osThreadDef(centralizeData, TK_data, osPriorityNormal, 0, 300);
-  centralizeDataHandle = osThreadCreate(osThread(centralizeData), NULL);
   /* USER CODE END RTOS_THREADS */
 
   /* Create the queue(s) */

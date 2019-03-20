@@ -5,6 +5,7 @@
  *      Author: Cl�ment Nussbaumer
  */
 
+#include "cmsis_os.h"
 
 #include "Misc/Common.h"
 
