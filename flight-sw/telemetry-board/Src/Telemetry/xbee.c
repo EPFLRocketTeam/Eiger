@@ -11,7 +11,7 @@
 #include <Telemetry/xbee.h>
 
 extern osMessageQId xBeeQueueHandle;
-osSemaphoreId xBeeTxBufferSemHandle;
+extern osSemaphoreId xBeeTxBufferSemHandle;
 
 extern UART_HandleTypeDef* xBee_huart;
 

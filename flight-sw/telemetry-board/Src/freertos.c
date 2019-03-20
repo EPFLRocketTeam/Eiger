@@ -56,7 +56,9 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */     
-
+#include "led.h"
+#include "Telemetry/xbee.h"
+#include "Misc/Common.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -76,6 +78,9 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN Variables */
+osThreadId xBeeTelemetryHandle;
+osSemaphoreId xBeeTxBufferSemHandle;
+osMessageQId xBeeQueueHandle;
 
 /* USER CODE END Variables */
 osThreadId defaultTaskHandle;
@@ -110,6 +115,8 @@ void MX_FREERTOS_Init(void) {
 
   /* USER CODE BEGIN RTOS_SEMAPHORES */
   /* add semaphores, ... */
+  osSemaphoreDef(xBeeTxBufferSem);
+  xBeeTxBufferSemHandle = osSemaphoreCreate(osSemaphore(xBeeTxBufferSem), 1);
   /* USER CODE END RTOS_SEMAPHORES */
 
   /* USER CODE BEGIN RTOS_TIMERS */
@@ -131,10 +138,15 @@ void MX_FREERTOS_Init(void) {
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
+  osThreadDef(xBeeTelemetry, TK_xBeeTelemetry, osPriorityNormal, 0, 128);
+  xBeeTelemetryHandle = osThreadCreate(osThread(xBeeTelemetry), NULL);
   /* USER CODE END RTOS_THREADS */
 
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
+  osMessageQDef(xBeeQueue, 16, Telemetry_Message);
+  xBeeQueueHandle = osMessageCreate(osMessageQ(xBeeQueue), NULL);
+  vQueueAddToRegistry (xBeeQueueHandle, "xBee incoming queue");
   /* USER CODE END RTOS_QUEUES */
 }
 
@@ -154,7 +166,10 @@ void StartDefaultTask(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1);
+	led_set_rgb(50,  0,  0);
+    osDelay(100);
+	led_set_rgb( 0,  0,  0);
+    osDelay(100);
   }
   /* USER CODE END StartDefaultTask */
 }
@@ -172,7 +187,7 @@ void TK_task_s1(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1);
+    osDelay(1000);
   }
   /* USER CODE END TK_task_s1 */
 }
@@ -190,7 +205,7 @@ void TK_task_s2(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1);
+    osDelay(1000);
   }
   /* USER CODE END TK_task_s2 */
 }
