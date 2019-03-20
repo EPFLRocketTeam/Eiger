@@ -66,6 +66,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "led.h"
+#include "CAN_communication.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -150,6 +151,8 @@ int main(void)
   led_init();
 
   xBee_huart = &huart1;
+
+  CAN_Config(ID_TELEMETRY_SD);
   /* USER CODE END 2 */
 
   /* Call init function for freertos objects (in freertos.c) */

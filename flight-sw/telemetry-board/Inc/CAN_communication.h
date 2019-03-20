@@ -41,8 +41,8 @@ CAN_msg                  current_msg;
 #define ID_TELEMETRY_SD 2
 
 
-void CAN_Config(uint32_t);
-void setFrame(uint32_t, uint8_t, uint32_t);
+void CAN_Config(uint32_t id);
+void setFrame(uint32_t data, uint8_t data_id, uint32_t timestamp);
 uint32_t readFrame(void);
 
 #endif /* CAN_COMMUNICATION_H_ */
