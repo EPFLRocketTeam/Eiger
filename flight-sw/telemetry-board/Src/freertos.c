@@ -57,6 +57,8 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */     
 
+#include <Misc/datastructs.h>
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -81,6 +83,9 @@
 osThreadId defaultTaskHandle;
 osThreadId task_s1Handle;
 osThreadId task_s2Handle;
+osThreadId data_mgmtHandle;
+osThreadId sdWriteHandle;
+osMessageQId sdLoggingQueueHandle;
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
@@ -90,6 +95,8 @@ osThreadId task_s2Handle;
 void StartDefaultTask(void const * argument);
 void TK_task_s1(void const * argument);
 void TK_task_s2(void const * argument);
+extern void TK_data(void const * argument);
+extern void TK_sd_sync(void const * argument);
 
 extern void MX_FATFS_Init(void);
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
@@ -118,20 +125,33 @@ void MX_FREERTOS_Init(void) {
 
   /* Create the thread(s) */
   /* definition and creation of defaultTask */
-  osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128);
+  osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 256);
   defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
 
   /* definition and creation of task_s1 */
-  osThreadDef(task_s1, TK_task_s1, osPriorityNormal, 0, 128);
+  osThreadDef(task_s1, TK_task_s1, osPriorityNormal, 0, 256);
   task_s1Handle = osThreadCreate(osThread(task_s1), NULL);
 
   /* definition and creation of task_s2 */
-  osThreadDef(task_s2, TK_task_s2, osPriorityNormal, 0, 128);
+  osThreadDef(task_s2, TK_task_s2, osPriorityNormal, 0, 256);
   task_s2Handle = osThreadCreate(osThread(task_s2), NULL);
+
+  /* definition and creation of data_mgmt */
+  osThreadDef(data_mgmt, TK_data, osPriorityNormal, 0, 1024);
+  data_mgmtHandle = osThreadCreate(osThread(data_mgmt), NULL);
+
+  /* definition and creation of sdWrite */
+  osThreadDef(sdWrite, TK_sd_sync, osPriorityBelowNormal, 0, 1024);
+  sdWriteHandle = osThreadCreate(osThread(sdWrite), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
+
+  /* Create the queue(s) */
+  /* definition and creation of sdLoggingQueue */
+  osMessageQDef(sdLoggingQueue, 16, String_Message);
+  sdLoggingQueueHandle = osMessageCreate(osMessageQ(sdLoggingQueue), NULL);
 
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */

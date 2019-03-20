@@ -2,7 +2,7 @@
  * datastructs.h
  *
  *  Created on: 5 Apr 2018
- *      Author: Clément Nussbaumer
+ *      Author: Clï¿½ment Nussbaumer
  */
 
 #ifndef INCLUDE_DATASTRUCTS_H_
@@ -41,6 +41,13 @@ typedef struct
   void* ptr;
   uint16_t size;
 } Telemetry_Message;
+
+typedef struct
+{
+  void* ptr;
+  uint16_t size;
+} String_Message;
+
 
 #ifdef __cplusplus
  }
