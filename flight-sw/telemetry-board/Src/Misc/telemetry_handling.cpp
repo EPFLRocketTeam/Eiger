@@ -5,7 +5,6 @@
  *      Author: Cl�ment Nussbaumer
  */
 
-#include "cmsis_os.h"
 
 #include "Misc/Common.h"
 
@@ -18,7 +17,7 @@
 extern osMessageQId xBeeQueueHandle;
 
 
-void TK_data (void const * args)
+void TK_telemetry_data (void const * args)
 {
   uint32_t telemetrySeqNumber = 0;
 

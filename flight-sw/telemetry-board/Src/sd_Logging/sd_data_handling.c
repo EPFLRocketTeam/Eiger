@@ -12,7 +12,7 @@
 extern osMessageQId sdLoggingQueueHandle;
 char buffer[2048];
 
-void TK_data (void const * args)
+void TK_sd_data (void const * args)
 {
   osDelay (5000);
 

@@ -89,8 +89,9 @@ osMessageQId xBeeQueueHandle;
 osThreadId defaultTaskHandle;
 osThreadId task_s1Handle;
 osThreadId task_s2Handle;
-osThreadId data_mgmtHandle;
+osThreadId telemetry_mgmtHandle;
 osThreadId sdWriteHandle;
+osThreadId SD_dataHandle;
 osMessageQId sdLoggingQueueHandle;
 
 /* Private function prototypes -----------------------------------------------*/
@@ -101,8 +102,9 @@ osMessageQId sdLoggingQueueHandle;
 void StartDefaultTask(void const * argument);
 void TK_task_s1(void const * argument);
 void TK_task_s2(void const * argument);
-extern void TK_data(void const * argument);
+extern void TK_telemetry_data(void const * argument);
 extern void TK_sd_sync(void const * argument);
+extern void TK_sd_data(void const * argument);
 
 extern void MX_FATFS_Init(void);
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
@@ -144,13 +146,17 @@ void MX_FREERTOS_Init(void) {
   osThreadDef(task_s2, TK_task_s2, osPriorityNormal, 0, 256);
   task_s2Handle = osThreadCreate(osThread(task_s2), NULL);
 
-  /* definition and creation of data_mgmt */
-  osThreadDef(data_mgmt, TK_data, osPriorityNormal, 0, 1024);
-  data_mgmtHandle = osThreadCreate(osThread(data_mgmt), NULL);
+  /* definition and creation of telemetry_mgmt */
+  osThreadDef(telemetry_mgmt, TK_telemetry_data, osPriorityNormal, 0, 1024);
+  telemetry_mgmtHandle = osThreadCreate(osThread(telemetry_mgmt), NULL);
 
   /* definition and creation of sdWrite */
   osThreadDef(sdWrite, TK_sd_sync, osPriorityBelowNormal, 0, 1024);
   sdWriteHandle = osThreadCreate(osThread(sdWrite), NULL);
+
+  /* definition and creation of SD_data */
+  osThreadDef(SD_data, TK_sd_data, osPriorityBelowNormal, 0, 1024);
+  SD_dataHandle = osThreadCreate(osThread(SD_data), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
