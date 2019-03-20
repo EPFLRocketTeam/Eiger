@@ -11,7 +11,7 @@
 #include <Telemetry/xbee.h>
 
 extern osMessageQId xBeeQueueHandle;
-osSemaphoreId xBeeTxBufferSemHandle;
+extern osSemaphoreId xBeeTxBufferSemHandle;
 
 extern UART_HandleTypeDef* xBee_huart;
 
@@ -147,7 +147,8 @@ void sendXbeeFrame ()
 
   currentCrc = 0xff - currentCrc;
   txDmaBuffer[pos++] = currentCrc;
-  HAL_UART_Transmit_DMA (xBee_huart, txDmaBuffer, pos);
+  HAL_UART_Transmit(xBee_huart, txDmaBuffer, pos, 500);
+  osSemaphoreRelease (xBeeTxBufferSemHandle);
 
   currentXbeeTxBufPos = 0;
 }

@@ -56,9 +56,10 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */     
-
-#include <Misc/datastructs.h>
-
+#include "led.h"
+#include "Telemetry/xbee.h"
+#include "Misc/Common.h"
+#include "Misc/data_handling.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -78,14 +79,16 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN Variables */
+osThreadId xBeeTelemetryHandle;
+osThreadId centralizeDataHandle;
+
+osSemaphoreId xBeeTxBufferSemHandle;
+osMessageQId xBeeQueueHandle;
 
 /* USER CODE END Variables */
 osThreadId defaultTaskHandle;
 osThreadId task_s1Handle;
 osThreadId task_s2Handle;
-osThreadId data_mgmtHandle;
-osThreadId sdWriteHandle;
-osMessageQId sdLoggingQueueHandle;
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
@@ -95,8 +98,6 @@ osMessageQId sdLoggingQueueHandle;
 void StartDefaultTask(void const * argument);
 void TK_task_s1(void const * argument);
 void TK_task_s2(void const * argument);
-extern void TK_data(void const * argument);
-extern void TK_sd_sync(void const * argument);
 
 extern void MX_FATFS_Init(void);
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
@@ -117,6 +118,8 @@ void MX_FREERTOS_Init(void) {
 
   /* USER CODE BEGIN RTOS_SEMAPHORES */
   /* add semaphores, ... */
+  osSemaphoreDef(xBeeTxBufferSem);
+  xBeeTxBufferSemHandle = osSemaphoreCreate(osSemaphore(xBeeTxBufferSem), 1);
   /* USER CODE END RTOS_SEMAPHORES */
 
   /* USER CODE BEGIN RTOS_TIMERS */
@@ -125,36 +128,31 @@ void MX_FREERTOS_Init(void) {
 
   /* Create the thread(s) */
   /* definition and creation of defaultTask */
-  osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 256);
+  osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128);
   defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
 
   /* definition and creation of task_s1 */
-  osThreadDef(task_s1, TK_task_s1, osPriorityNormal, 0, 256);
+  osThreadDef(task_s1, TK_task_s1, osPriorityNormal, 0, 128);
   task_s1Handle = osThreadCreate(osThread(task_s1), NULL);
 
   /* definition and creation of task_s2 */
-  osThreadDef(task_s2, TK_task_s2, osPriorityNormal, 0, 256);
+  osThreadDef(task_s2, TK_task_s2, osPriorityNormal, 0, 128);
   task_s2Handle = osThreadCreate(osThread(task_s2), NULL);
-
-  /* definition and creation of data_mgmt */
-  osThreadDef(data_mgmt, TK_data, osPriorityNormal, 0, 1024);
-  data_mgmtHandle = osThreadCreate(osThread(data_mgmt), NULL);
-
-  /* definition and creation of sdWrite */
-  osThreadDef(sdWrite, TK_sd_sync, osPriorityBelowNormal, 0, 1024);
-  sdWriteHandle = osThreadCreate(osThread(sdWrite), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
-  /* USER CODE END RTOS_THREADS */
+  osThreadDef(xBeeTelemetry, TK_xBeeTelemetry, osPriorityNormal, 0, 128);
+  xBeeTelemetryHandle = osThreadCreate(osThread(xBeeTelemetry), NULL);
 
-  /* Create the queue(s) */
-  /* definition and creation of sdLoggingQueue */
-  osMessageQDef(sdLoggingQueue, 16, String_Message);
-  sdLoggingQueueHandle = osMessageCreate(osMessageQ(sdLoggingQueue), NULL);
+  osThreadDef(centralizeData, TK_data, osPriorityNormal, 0, 300);
+  centralizeDataHandle = osThreadCreate(osThread(centralizeData), NULL);
+  /* USER CODE END RTOS_THREADS */
 
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
+  osMessageQDef(xBeeQueue, 16, Telemetry_Message);
+  xBeeQueueHandle = osMessageCreate(osMessageQ(xBeeQueue), NULL);
+  vQueueAddToRegistry (xBeeQueueHandle, "xBee incoming queue");
   /* USER CODE END RTOS_QUEUES */
 }
 
@@ -174,7 +172,10 @@ void StartDefaultTask(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1);
+	led_set_rgb(50,  0,  0);
+    osDelay(100);
+	led_set_rgb( 0,  0,  0);
+    osDelay(100);
   }
   /* USER CODE END StartDefaultTask */
 }
@@ -192,7 +193,7 @@ void TK_task_s1(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1);
+    osDelay(1000);
   }
   /* USER CODE END TK_task_s1 */
 }
@@ -210,7 +211,7 @@ void TK_task_s2(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1);
+    osDelay(1000);
   }
   /* USER CODE END TK_task_s2 */
 }

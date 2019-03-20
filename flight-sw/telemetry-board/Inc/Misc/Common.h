@@ -84,16 +84,6 @@ static inline int32_t mod (int32_t x, int32_t n)
   return r < 0 ? r + n : r;
 }
 
-//TODO: use a timer with a bigger period
-static inline void delayUs (uint32_t delay)
-{
-  uint32_t start = __HAL_TIM_GET_COUNTER(&htim7);
-  int32_t elapsed;
-
-  while ((elapsed = mod (((int32_t) __HAL_TIM_GET_COUNTER(&htim7) - start), htim7.Init.Period) < delay))
-    ;
-}
-
 static inline void floatToUint8 (uint8_t* uint8Ptr, float* floatPtr)
 {
   uint8_t* floatAsUintPtr = (uint8_t*) floatPtr;

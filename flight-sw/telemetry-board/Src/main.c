@@ -65,7 +65,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "led.h"
+#include "CAN_communication.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -98,7 +99,7 @@ void MX_FREERTOS_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+UART_HandleTypeDef* xBee_huart;
 /* USER CODE END 0 */
 
 /**
@@ -147,7 +148,11 @@ int main(void)
   MX_USART3_UART_Init();
   MX_USART6_UART_Init();
   /* USER CODE BEGIN 2 */
+  led_init();
 
+  xBee_huart = &huart1;
+
+  CAN_Config(ID_TELEMETRY_SD);
   /* USER CODE END 2 */
 
   /* Call init function for freertos objects (in freertos.c) */
