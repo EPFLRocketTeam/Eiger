@@ -59,6 +59,7 @@
 #include "led.h"
 #include "Telemetry/xbee.h"
 #include "Misc/Common.h"
+#include "Misc/data_handling.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -79,6 +80,8 @@
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN Variables */
 osThreadId xBeeTelemetryHandle;
+osThreadId centralizeDataHandle;
+
 osSemaphoreId xBeeTxBufferSemHandle;
 osMessageQId xBeeQueueHandle;
 
@@ -140,6 +143,9 @@ void MX_FREERTOS_Init(void) {
   /* add threads, ... */
   osThreadDef(xBeeTelemetry, TK_xBeeTelemetry, osPriorityNormal, 0, 128);
   xBeeTelemetryHandle = osThreadCreate(osThread(xBeeTelemetry), NULL);
+
+  osThreadDef(centralizeData, TK_data, osPriorityNormal, 0, 300);
+  centralizeDataHandle = osThreadCreate(osThread(centralizeData), NULL);
   /* USER CODE END RTOS_THREADS */
 
   /* USER CODE BEGIN RTOS_QUEUES */

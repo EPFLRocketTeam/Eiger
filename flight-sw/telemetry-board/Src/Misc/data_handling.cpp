@@ -36,7 +36,7 @@ void TK_data (void const * args)
                                                      telemetrySeqNumber++);
       osMessagePut (xBeeQueueHandle, (uint32_t) &m, 50);
 
-      osDelay (15 - (HAL_GetTick () - measurement_time));
+      osDelay (100 - (HAL_GetTick () - measurement_time));
     }
 }
 
