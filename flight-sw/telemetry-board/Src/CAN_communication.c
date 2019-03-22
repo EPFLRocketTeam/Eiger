@@ -10,10 +10,16 @@
  */
 
 #include "CAN_communication.h"
-#include "led.h"
 
 extern CAN_HandleTypeDef hcan1;
 
+CAN_TxHeaderTypeDef   TxHeader;
+CAN_RxHeaderTypeDef   RxHeader;
+uint8_t               TxData[8];
+uint8_t               RxData[8];
+uint32_t              TxMailbox;
+
+volatile CAN_msg can_current_msg;
 /*
  * Configures CAN protocol for 250kbit/s without interrupt for reading (only polling).
  */
@@ -86,7 +92,7 @@ void CAN_Config(uint32_t id)
  * byte 4    --> data_id, see CAN_communication.h
  * byte 5..7 --> timestamp
  */
-void setFrame(uint32_t data, uint8_t data_id, uint32_t timestamp) {
+void can_setFrame(uint32_t data, uint8_t data_id, uint32_t timestamp) {
     TxData[0] = (uint8_t) (data >> 24);
     TxData[1] = (uint8_t) (data >> 16);
     TxData[2] = (uint8_t) (data >> 8);
@@ -98,10 +104,8 @@ void setFrame(uint32_t data, uint8_t data_id, uint32_t timestamp) {
     
     if (HAL_CAN_AddTxMessage(&hcan1, &TxHeader, TxData, &TxMailbox) != HAL_OK) {
         // deal with it (never fails)
-        //led_set_rgb(50, 0, 0);
     }
     else {
-        //led_set_rgb(0, 1000, 0);
     }
 }
 
@@ -114,19 +118,18 @@ void setFrame(uint32_t data, uint8_t data_id, uint32_t timestamp) {
  * byte 4    --> data_id, see CAN_communication.h
  * byte 5..7 --> timestamp
  */
-uint32_t readFrame(void) {
+uint32_t can_readFrame(void) {
     uint32_t fill_level = HAL_CAN_GetRxFifoFillLevel(&hcan1, CAN_RX_FIFO0);
     if (fill_level > 0) {
         HAL_CAN_GetRxMessage(&hcan1, CAN_RX_FIFO0, &RxHeader, RxData);
-        memcpy(&current_msg.data, RxData, 4);
-        current_msg.id = RxData[4];
+        memcpy(&can_current_msg.data, RxData, 4);
+        can_current_msg.id = RxData[4];
         //----------------------------------------------------------------------check if works
-        uint8_t* ptr = (uint8_t*) &current_msg.timestamp;
+        uint8_t* ptr = (uint8_t*) &can_current_msg.timestamp;
         *ptr = 0;
         memcpy(&ptr[1], &RxData[5], 3);
         //----------------------------------------------------------------------check if works
-        current_msg.id_CAN = RxHeader.StdId;
-        //led_set_rgb(0, 0, 50);
+        can_current_msg.id_CAN = RxHeader.StdId;
     }
     return fill_level;
 }

@@ -19,15 +19,10 @@ typedef struct
     uint32_t id_CAN;
 } CAN_msg;
 
-CAN_TxHeaderTypeDef   TxHeader;
-CAN_RxHeaderTypeDef   RxHeader;
-uint8_t               TxData[8];
-uint8_t               RxData[8];
-uint32_t              TxMailbox;
-CAN_msg                  current_msg;
+extern volatile CAN_msg can_current_msg;
 
 // Define all the data ID's
-#define DATA_ID_ALTITUDE 0
+#define DATA_ID_PRESSURE 0
 #define DATA_ID_ACCELERATION_X 1
 #define DATA_ID_ACCELERATION_Y 2
 #define DATA_ID_ACCELERATION_Z 3
@@ -42,7 +37,7 @@ CAN_msg                  current_msg;
 
 
 void CAN_Config(uint32_t id);
-void setFrame(uint32_t data, uint8_t data_id, uint32_t timestamp);
-uint32_t readFrame(void);
+void can_setFrame(uint32_t data, uint8_t data_id, uint32_t timestamp);
+uint32_t can_readFrame(void);
 
 #endif /* CAN_COMMUNICATION_H_ */
