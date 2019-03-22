@@ -11,16 +11,18 @@
 #include <Misc/datastructs.h>
 #include <Misc/Common.h>
 
+extern SD_HandleTypeDef hsd;
+
 #define MAX_FOLDER_NUMBER 1000
 
 extern osMessageQId sdLoggingQueueHandle;
 
 FIL sensorsFile, eventsFile;
-const TCHAR sensor_file_header[] =
-    "Header file, to be changer\r\n";
+const TCHAR sensor_file_header[] = "Header file, to be changed\r\n";
 const TCHAR events_file_header[] = "timestamp, event_description\r\n";
 char buffer[2048];
 uint8_t file_closed = 0;
+int sdErrorCounter = 0;
 
 osStatus initSdFile ()
 {
@@ -60,7 +62,7 @@ osStatus initSdFile ()
       TCHAR dir[20];
       for (int i = 0; i < MAX_FOLDER_NUMBER; i++)
         {
-          sprintf (dir, "DATA%02d", i);
+          sprintf (dir, "DATA%04d", i);
           FILINFO info;
           if (f_stat (dir, &info) != FR_OK)
             {
@@ -89,15 +91,13 @@ osStatus initSdFile ()
 
 void TK_sd_sync (void const* pvArgs)
 {
-  osDelay (200);
+  init: osDelay (200);
 
   if (initSdFile () != osOK)
     {
-//TODO: change led color perhaps?
-      for (;;)
-        {
-          osDelay (portMAX_DELAY);
-        }
+//TODO: Indicate problem
+      osDelay (10 * 1000);
+      goto init;
     }
 
   UINT bytes_written = 0;
@@ -112,45 +112,92 @@ void TK_sd_sync (void const* pvArgs)
   f_sync (&eventsFile);
   lastSync = HAL_GetTick ();
 
-  osDelay (1500);
+  osDelay (500);
+  FRESULT result = 0;
+
+  int i = -14;
 
   for (;;)
     {
-
+      result = 0;
       /*
-      if (currentState == STATE_TOUCHDOWN && !file_closed)
-        {
-          f_close (&sensorsFile);
-          f_close (&eventsFile);
-          file_closed = 1;
-          for (;;)
-            {
-              osDelay (portMAX_DELAY);
-            }
-        }*/
+       if (currentState == STATE_TOUCHDOWN && !file_closed)
+       {
+       f_close (&sensorsFile);
+       f_close (&eventsFile);
+       file_closed = 1;
+       for (;;)
+       {
+       osDelay (portMAX_DELAY);
+       }
+       }
 
-      osEvent event = osMessageGet (sdLoggingQueueHandle, 5);
-      if (event.status != osEventMessage)
+       osEvent event = osMessageGet (sdLoggingQueueHandle, 5);
+       if (event.status != osEventMessage)
+       {
+       goto endOfLoop;
+       }
+
+       String_Message* m = event.value.p;
+       vPortFree (m->ptr);
+       */
+
+      // ###############
+      // Here you need to fetch the data and to print it.
+      uint32_t measurement_time = HAL_GetTick ();
+      sprintf (buffer, "%d\t\tTest print %d\t free heap:\t%d\n", measurement_time, i++, xPortGetFreeHeapSize ());
+
+      // ###############
+
+      int line_size = strlen (buffer);
+      if (line_size > 768 || line_size < 0)
         {
           goto endOfLoop;
         }
+      result |= f_write (&sensorsFile, buffer, line_size, &bytes_written);
 
-      String_Message* m = event.value.p;
-      f_write (&sensorsFile, m->ptr, m->size, &bytes_written);
-      vPortFree (m->ptr);
-
-      if ((HAL_GetTick () - lastSync) > 1000)
+      if ((HAL_GetTick () - lastSync) > 1000) // synchronization every second with the SD card.
         {
-          f_sync (&sensorsFile);
-          //f_sync (&eventsFile);
+          result |= f_sync (&sensorsFile);
+          //result |= f_sync (&eventsFile);
           lastSync = HAL_GetTick ();
         }
 
       endOfLoop: elapsed = HAL_GetTick () - last_execution;
-      if (elapsed < 5)
+      uint32_t delay = 20; // Delay of 50ms
+      if (elapsed < delay)
         {
-          osDelay (5 - elapsed);
+          osDelay (delay - elapsed);
         }
       last_execution = HAL_GetTick ();
+
+      /*
+       if (result != FR_OK)
+       { // create a new file in case of problem.  ## does not work correctly yet
+       f_close (&sensorsFile);
+       f_close (&eventsFile);
+
+       HAL_SD_DeInit (&hsd);
+
+       osDelay (100);
+
+       HAL_StatusTypeDef sd_state = HAL_SD_Init (&hsd);
+       if (sd_state == MSD_OK)
+       {
+       if (HAL_SD_ConfigWideBusOperation (&hsd, SDIO_BUS_WIDE_4B) != HAL_OK)
+       {
+       sd_state = MSD_ERROR;
+       }
+       }
+
+       break;
+       }
+       */
+
     }
+
+  //we need to get outside the for loop to correctly deinitialize scope-local data.
+  sdErrorCounter++;
+  goto init;
+
 }
