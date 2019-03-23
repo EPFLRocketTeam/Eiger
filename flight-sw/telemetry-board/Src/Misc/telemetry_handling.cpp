@@ -24,6 +24,8 @@ extern "C" {
 #define TELE_TIMEMIN 100
 
 extern osMessageQId xBeeQueueHandle;
+extern volatile char sd_buffer[2048];
+extern bool new_sd_data_ready;
 
 
 Telemetry_Message createTelemetryDatagram (IMU_data* imu_data, BARO_data* baro_data, uint32_t measurement_time, uint32_t telemetrySeqNumber)
@@ -53,9 +55,11 @@ Telemetry_Message createTelemetryDatagram (IMU_data* imu_data, BARO_data* baro_d
 
 void sendSDcard(uint32_t id_can, uint32_t timestamp, uint8_t id, uint32_t data) {
    static uint32_t sdSeqNumber = 0;
-
-    sdSeqNumber++;
-
+   sdSeqNumber++;
+   if (!new_sd_data_ready) {
+	   sprintf((char*) sd_buffer, "%d\t%d\t%d\t%d\n", sdSeqNumber, HAL_GetTick(), id, data);
+	   new_sd_data_ready = 1;
+   }
 }
 
 void TK_telemetry_data (void const * args)

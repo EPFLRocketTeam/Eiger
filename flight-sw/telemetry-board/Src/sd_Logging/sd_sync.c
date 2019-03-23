@@ -5,11 +5,15 @@
  *      Author: Clément Nussbaumer
  */
 
+#include <stdbool.h>
 #include "cmsis_os.h"
 #include "fatfs.h"
+#include "led.h"
 
 #include <Misc/datastructs.h>
 #include <Misc/Common.h>
+
+#include <string.h>
 
 extern SD_HandleTypeDef hsd;
 
@@ -17,10 +21,12 @@ extern SD_HandleTypeDef hsd;
 
 extern osMessageQId sdLoggingQueueHandle;
 
+volatile bool new_sd_data_ready = 0;
+
 FIL sensorsFile, eventsFile;
-const TCHAR sensor_file_header[] = "Header file, to be changed\r\n";
-const TCHAR events_file_header[] = "timestamp, event_description\r\n";
-char buffer[2048];
+const TCHAR sensor_file_header[] = "CANSeq\tTimestamp[ms]\tID\tData\r\n";
+const TCHAR events_file_header[] = "NOT USED timestamp, event_description\r\n";
+volatile char sd_buffer[2048];
 uint8_t file_closed = 0;
 int sdErrorCounter = 0;
 
@@ -95,7 +101,7 @@ void TK_sd_sync (void const* pvArgs)
 
   if (initSdFile () != osOK)
     {
-//TODO: Indicate problem
+	  led_set_rgb(255,0,50);
       osDelay (10 * 1000);
       goto init;
     }
@@ -145,23 +151,25 @@ void TK_sd_sync (void const* pvArgs)
       // ###############
       // Here you need to fetch the data and to print it.
       uint32_t measurement_time = HAL_GetTick ();
-      sprintf (buffer, "%d\t\tTest print %d\t free heap:\t%d\n", measurement_time, i++, xPortGetFreeHeapSize ());
+      if (new_sd_data_ready) {
+      //sprintf (buffer, "%d\t\tTest print %d\t free heap:\t%d\n", measurement_time, i++, xPortGetFreeHeapSize ());
 
       // ###############
 
-      int line_size = strlen (buffer);
+      int line_size = strlen (sd_buffer);
       if (line_size > 768 || line_size < 0)
         {
           goto endOfLoop;
         }
-      result |= f_write (&sensorsFile, buffer, line_size, &bytes_written);
-
+      result |= f_write (&sensorsFile, sd_buffer, line_size, &bytes_written);
+      new_sd_data_ready = 0;
       if ((HAL_GetTick () - lastSync) > 1000) // synchronization every second with the SD card.
         {
           result |= f_sync (&sensorsFile);
           //result |= f_sync (&eventsFile);
           lastSync = HAL_GetTick ();
         }
+      }
 
       endOfLoop: elapsed = HAL_GetTick () - last_execution;
       uint32_t delay = 20; // Delay of 50ms
