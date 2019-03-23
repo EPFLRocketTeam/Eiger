@@ -147,9 +147,7 @@ void sendXbeeFrame ()
 
   currentCrc = 0xff - currentCrc;
   txDmaBuffer[pos++] = currentCrc;
-  HAL_UART_Transmit(xBee_huart, txDmaBuffer, pos, 500);
-  //HAL_UART_Transmit_DMA (xBee_huart, txDmaBuffer, pos);
-  osSemaphoreRelease (xBeeTxBufferSemHandle);
+  HAL_UART_Transmit_DMA (xBee_huart, txDmaBuffer, pos);
 
   currentXbeeTxBufPos = 0;
 }
