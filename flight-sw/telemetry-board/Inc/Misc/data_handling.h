@@ -17,9 +17,6 @@ extern "C"
 
   void TK_telemetry_data (const void* args);
 
-  Telemetry_Message createTelemetryDatagram (IMU_data* imu_data, BARO_data* baro_data, float32_t air_speed,
-                                             uint32_t measurement_time, uint32_t telemetrySeqNumber);
-
 #ifdef __cplusplus
 }
 #endif
