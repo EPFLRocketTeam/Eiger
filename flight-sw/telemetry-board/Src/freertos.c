@@ -193,9 +193,9 @@ void StartDefaultTask(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-	led_set_rgb(50,  0,  0);
+	led_set_b(50);
     osDelay(100);
-	led_set_rgb( 0,  0,  0);
+	led_set_b( 0);
     osDelay(100);
   }
   /* USER CODE END StartDefaultTask */

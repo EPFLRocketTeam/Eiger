@@ -41,9 +41,9 @@ Telemetry_Message createTelemetryDatagram (IMU_data* imu_data, BARO_data* baro_d
   builder.write32<float32_t> (imu_data->acceleration.y);
   builder.write32<float32_t> (imu_data->acceleration.z);
 
-  builder.write32<float32_t> (1); // flight status
-  builder.write32<float32_t> (0); // AB_angle
-  builder.write32<float32_t> (0); // pitot_press
+  builder.write32<float32_t> (imu_data->eulerAngles.x); // flight status
+  builder.write32<float32_t> (imu_data->eulerAngles.y); // AB_angle
+  builder.write32<float32_t> (imu_data->eulerAngles.z); // pitot_press
 
   builder.write32<float32_t> (baro_data->temperature);
   builder.write32<float32_t> (baro_data->pressure);
@@ -101,6 +101,15 @@ void TK_telemetry_data (void const * args)
 		  new_imu = 1;  // only update when we get IMU from Z
 		  meas_time = HAL_GetTick();
 		  break;
+        case DATA_ID_GYRO_X:
+          imu.eulerAngles.x = ((float32_t) ((int32_t) can_current_msg.data)); // convert from mrps
+          break;
+        case DATA_ID_GYRO_Y:
+          imu.eulerAngles.y = ((float32_t) ((int32_t) can_current_msg.data));
+          break;
+        case DATA_ID_GYRO_Z:
+          imu.eulerAngles.z = ((float32_t) ((int32_t) can_current_msg.data));
+          break;
 		  }
 	  }
 
