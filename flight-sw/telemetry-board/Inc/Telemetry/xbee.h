@@ -14,10 +14,6 @@
 
 #define XBEE_PERFORMANCE_BPS 80000
 
-extern osMessageQId xBeeQueueHandle;
-
-
-
 void initXbee ();
 void TK_xBeeTelemetry (const void* args);
 
