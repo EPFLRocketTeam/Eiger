@@ -172,13 +172,13 @@ void TK_sd_sync (void const* pvArgs)
       }
 
       endOfLoop: elapsed = HAL_GetTick () - last_execution;
-      uint32_t delay = 20; // Delay of 50ms
+      uint32_t delay = 5; // Delay of 50ms
       if (elapsed < delay)
         {
-          osDelay (delay - elapsed);
+          //osDelay (delay - elapsed);
         }
       last_execution = HAL_GetTick ();
-
+      osDelay(1);
       /*
        if (result != FR_OK)
        { // create a new file in case of problem.  ## does not work correctly yet

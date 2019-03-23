@@ -80,7 +80,7 @@ void TK_telemetry_data (void const * args)
 
   for (;;)
     {
-	  if (can_readFrame()) { // check if new data
+	  while (can_readFrame()) { // check if new data
 
 	    // add to SD card
 	    sendSDcard(can_current_msg.id_CAN, can_current_msg.timestamp, can_current_msg.id, can_current_msg.data);
@@ -110,18 +110,18 @@ void TK_telemetry_data (void const * args)
         case DATA_ID_GYRO_Z:
           imu.eulerAngles.z = ((float32_t) ((int32_t) can_current_msg.data));
           break;
-		  }
-	  }
+	    }
 
-	  sendSDcard(can_current_msg.id_CAN, can_current_msg.timestamp, can_current_msg.id, can_current_msg.data);
-	  // if both sensor data are new or timeout
- 	  if ((new_baro || new_imu) && (HAL_GetTick() - tele_time > TELE_TIMEMIN)) {
- 		Telemetry_Message m = createTelemetryDatagram (&imu, &baro, meas_time, telemetrySeqNumber++);
- 	    osMessagePut (xBeeQueueHandle, (uint32_t) &m, 50);
- 		tele_time = HAL_GetTick();
- 		new_baro = 0;
- 		new_imu  = 0;
- 	  }
+	    sendSDcard(can_current_msg.id_CAN, can_current_msg.timestamp, can_current_msg.id, can_current_msg.data);
+	    // if both sensor data are new or timeout
+	    if ((new_baro || new_imu) && (HAL_GetTick() - tele_time > TELE_TIMEMIN)) {
+	    	Telemetry_Message m = createTelemetryDatagram (&imu, &baro, meas_time, telemetrySeqNumber++);
+	    	osMessagePut (xBeeQueueHandle, (uint32_t) &m, 50);
+	    	tele_time = HAL_GetTick();
+	    	new_baro = 0;
+	    	new_imu  = 0;
+	    }
+	  }
 
       osDelay (1);
     }
