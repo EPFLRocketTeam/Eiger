@@ -1,4 +1,5 @@
 Debug/ 
+Release/
 .osx.* 
 .settings/ 
 mx.scratch 
@@ -6,3 +7,4 @@ mx.scratch
 *.cfg 
 html/
 .DS_Store
+*.bak
