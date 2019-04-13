@@ -7,11 +7,12 @@
 
 #include "stm32f4xx_hal.h"
 #include "Misc/Common.h"
+#include "FreeRTOS.h"
 
 #include <Telemetry/xbee.h>
 
-extern osMessageQId xBeeQueueHandle;
-extern osSemaphoreId xBeeTxBufferSemHandle;
+osMessageQId xBeeQueueHandle;
+osSemaphoreId xBeeTxBufferSemHandle;
 
 extern UART_HandleTypeDef* xBee_huart;
 
@@ -42,6 +43,15 @@ uint8_t currentCrc = 0;
 uint8_t payloadBuffer[XBEE_PAYLOAD_MAX_SIZE];
 uint8_t txDmaBuffer[2 * XBEE_PAYLOAD_MAX_SIZE + XBEE_CHECKSUM_SIZE + XBEE_FRAME_BEGINNING_SIZE];
 uint16_t currentXbeeTxBufPos = 0;
+
+void xbee_freertos_init() {
+	osSemaphoreDef(xBeeTxBufferSem);
+	xBeeTxBufferSemHandle = osSemaphoreCreate(osSemaphore(xBeeTxBufferSem), 1);
+
+	osMessageQDef(xBeeQueue, 16, Telemetry_Message);
+	xBeeQueueHandle = osMessageCreate(osMessageQ(xBeeQueue), NULL);
+	vQueueAddToRegistry (xBeeQueueHandle, "xBee incoming queue");
+}
 
 void TK_xBeeTelemetry (const void* args)
 {

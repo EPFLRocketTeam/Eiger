@@ -82,8 +82,6 @@
 osThreadId xBeeTelemetryHandle;
 osThreadId centralizeDataHandle;
 
-osSemaphoreId xBeeTxBufferSemHandle;
-osMessageQId xBeeQueueHandle;
 
 /* USER CODE END Variables */
 osThreadId defaultTaskHandle;
@@ -116,7 +114,7 @@ void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
   */
 void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN Init */
-       
+  xbee_freertos_init();
   /* USER CODE END Init */
 
   /* USER CODE BEGIN RTOS_MUTEX */
@@ -125,8 +123,6 @@ void MX_FREERTOS_Init(void) {
 
   /* USER CODE BEGIN RTOS_SEMAPHORES */
   /* add semaphores, ... */
-  osSemaphoreDef(xBeeTxBufferSem);
-  xBeeTxBufferSemHandle = osSemaphoreCreate(osSemaphore(xBeeTxBufferSem), 1);
   /* USER CODE END RTOS_SEMAPHORES */
 
   /* USER CODE BEGIN RTOS_TIMERS */
@@ -171,9 +167,7 @@ void MX_FREERTOS_Init(void) {
 
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
-  osMessageQDef(xBeeQueue, 16, Telemetry_Message);
-  xBeeQueueHandle = osMessageCreate(osMessageQ(xBeeQueue), NULL);
-  vQueueAddToRegistry (xBeeQueueHandle, "xBee incoming queue");
+
   /* USER CODE END RTOS_QUEUES */
 }
 

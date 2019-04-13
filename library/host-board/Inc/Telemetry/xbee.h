@@ -14,6 +14,8 @@
 
 #define XBEE_PERFORMANCE_BPS 80000
 
+
+void xbee_freertos_init();
 void initXbee ();
 void TK_xBeeTelemetry (const void* args);
 
