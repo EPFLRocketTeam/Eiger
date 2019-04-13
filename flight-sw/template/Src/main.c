@@ -99,7 +99,6 @@ void MX_FREERTOS_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-UART_HandleTypeDef* xBee_huart;
 /* USER CODE END 0 */
 
 /**

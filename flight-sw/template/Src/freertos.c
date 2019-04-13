@@ -79,11 +79,6 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN Variables */
-osThreadId xBeeTelemetryHandle;
-osThreadId centralizeDataHandle;
-
-osSemaphoreId xBeeTxBufferSemHandle;
-osMessageQId xBeeQueueHandle;
 
 /* USER CODE END Variables */
 osThreadId defaultTaskHandle;
