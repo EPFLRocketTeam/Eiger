@@ -57,8 +57,9 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */     
 #include "led.h"
-#include "usart.h"
-#include <string.h>
+#include "Telemetry/xbee.h"
+#include "Misc/Common.h"
+#include "Misc/data_handling.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -78,6 +79,11 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN Variables */
+osThreadId xBeeTelemetryHandle;
+osThreadId centralizeDataHandle;
+
+osSemaphoreId xBeeTxBufferSemHandle;
+osMessageQId xBeeQueueHandle;
 
 /* USER CODE END Variables */
 osThreadId defaultTaskHandle;
@@ -86,11 +92,7 @@ osThreadId task_s2Handle;
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
-void debugPrintln(UART_HandleTypeDef *huart, char _out[]){
-       HAL_UART_Transmit(huart, (uint8_t *) _out, strlen(_out), 10);
-       char newline[2] = "\r\n";
-       HAL_UART_Transmit(huart, (uint8_t *) newline, 2, 10);
-}
+   
 /* USER CODE END FunctionPrototypes */
 
 void StartDefaultTask(void const * argument);
@@ -124,15 +126,15 @@ void MX_FREERTOS_Init(void) {
 
   /* Create the thread(s) */
   /* definition and creation of defaultTask */
-  osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128);
+  osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 256);
   defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
 
   /* definition and creation of task_s1 */
-  osThreadDef(task_s1, TK_task_s1, osPriorityNormal, 0, 128);
+  osThreadDef(task_s1, TK_task_s1, osPriorityNormal, 0, 256);
   task_s1Handle = osThreadCreate(osThread(task_s1), NULL);
 
   /* definition and creation of task_s2 */
-  osThreadDef(task_s2, TK_task_s2, osPriorityNormal, 0, 128);
+  osThreadDef(task_s2, TK_task_s2, osPriorityNormal, 0, 256);
   task_s2Handle = osThreadCreate(osThread(task_s2), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
@@ -158,38 +160,12 @@ void StartDefaultTask(void const * argument)
 
   /* USER CODE BEGIN StartDefaultTask */
   /* Infinite loop */
-  uint8_t c;
   for(;;)
   {
-	  if (HAL_UART_Receive (&huart6, &c, 1, 0) == HAL_OK) {
-		  HAL_UART_Transmit(&huart3, &c, 1, 100);
-		  led_set_rgb(0,  0,  1000);
-	  }
-
-
-	  if (HAL_UART_Receive (&huart1, &c, 1, 0) == HAL_OK) {
-		  HAL_UART_Transmit(&huart3, &c, 1, 100);
-		  led_set_rgb(0,  1000,  0);
-
-	  }
-
-	  if (HAL_UART_Receive (&huart3, &c, 1, 0) == HAL_OK) {
-		  HAL_UART_Transmit(&huart6, &c, 1, 0);
-		  HAL_UART_Transmit(&huart1, &c, 1, 0);
-		  led_set_rgb(1000,  0,  0);
-	  }
-
-
-	  //debugPrintln(&huart3, "Hello world");
-      //osDelay(1000);
-	  led_set_rgb(50,  0,  0);
-	  //osDelay(100);
-	  //led_set_rgb( 0, 50,  0);
-	  //osDelay(100);
-	  //led_set_rgb( 0,  0, 50);
-	  //osDelay(100);
-
-
+	led_set_b(50);
+    osDelay(100);
+	led_set_b( 0);
+    osDelay(100);
   }
   /* USER CODE END StartDefaultTask */
 }
@@ -207,7 +183,7 @@ void TK_task_s1(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1);
+    osDelay(1000);
   }
   /* USER CODE END TK_task_s1 */
 }
@@ -225,7 +201,7 @@ void TK_task_s2(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1);
+    osDelay(1000);
   }
   /* USER CODE END TK_task_s2 */
 }
