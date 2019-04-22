@@ -57,9 +57,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */     
 #include "led.h"
-#include "Telemetry/xbee.h"
-#include "Misc/Common.h"
-#include "Misc/data_handling.h"
+#include "Misc/sd_sync.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -69,7 +67,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+#define SDCARD
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -79,6 +77,7 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN Variables */
+osThreadId sdWriteHandle;
 
 /* USER CODE END Variables */
 osThreadId defaultTaskHandle;
@@ -134,6 +133,10 @@ void MX_FREERTOS_Init(void) {
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
+#ifdef SDCARD
+  osThreadDef(sdWrite, TK_sd_sync, osPriorityBelowNormal, 0, 1024);
+  sdWriteHandle = osThreadCreate(osThread(sdWrite), NULL);
+#endif
   /* USER CODE END RTOS_THREADS */
 
   /* USER CODE BEGIN RTOS_QUEUES */
@@ -157,10 +160,7 @@ void StartDefaultTask(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-	led_set_b(50);
-    osDelay(100);
-	led_set_b( 0);
-    osDelay(100);
+	osDelay(100);
   }
   /* USER CODE END StartDefaultTask */
 }
@@ -175,10 +175,18 @@ void StartDefaultTask(void const * argument)
 void TK_task_s1(void const * argument)
 {
   /* USER CODE BEGIN TK_task_s1 */
+	int i = 0;
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1000);
+	  led_set_b(1000);
+	  if (!new_sd_data_ready) {
+		  sprintf(sd_buffer, "count %d\n", i++);
+		  new_sd_data_ready = 1;
+	  }
+	  osDelay(1);
+	  led_set_b(0);
+	  osDelay(100);
   }
   /* USER CODE END TK_task_s1 */
 }
