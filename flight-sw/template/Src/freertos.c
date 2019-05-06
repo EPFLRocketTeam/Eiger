@@ -71,7 +71,9 @@
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
+int r=1000, g=0, b=0;
 /* USER CODE BEGIN PD */
+
 
 //#define AB_CONTROL
 //#define SDCARD
@@ -111,7 +113,25 @@ void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
   */
 void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN Init */
-       
+#ifdef MAIN_BOARD
+r=0, g=100, b=0;
+#endif
+
+#ifdef BLACK_BOX_BOARD
+r=80, g=50, b=0;
+#endif
+
+#ifdef TELEMETRY_BOARD
+r=0, g=0, b=100;
+#endif
+
+#ifdef AIRBRAKE_BOARD
+r=100, g=0, b=100;
+#endif
+
+#ifdef DEBUG_BOARD
+r=50, g=50, b=50;
+#endif
   /* USER CODE END Init */
 
   /* USER CODE BEGIN RTOS_MUTEX */
@@ -189,18 +209,15 @@ void StartDefaultTask(void const * argument)
 void TK_task_s1(void const * argument)
 {
   /* USER CODE BEGIN TK_task_s1 */
-	int i = 0;
+  led_set_rgb(r,g,b);
+  osDelay(1000);
+
   /* Infinite loop */
   for(;;)
   {
-	  led_set_b(1000);
-	  // sd card example code
-	  if (!new_sd_data_ready) {
-		  sprintf(sd_buffer, "count %d\n", i++);
-		  new_sd_data_ready = 1;
-	  }
-	  osDelay(1);
-	  led_set_b(0);
+	  led_set_rgb(r,g,b);
+	  osDelay(100);
+	  led_set_rgb(0,0,0);
 	  osDelay(100);
   }
   /* USER CODE END TK_task_s1 */
