@@ -55,11 +55,13 @@
 #include "cmsis_os.h"
 
 /* Private includes ----------------------------------------------------------*/
-/* USER CODE BEGIN Includes */     
+/* USER CODE BEGIN Includes */
+#include "usart.h"
 #include "led.h"
 #include "Telemetry/xbee.h"
 #include "Misc/Common.h"
 #include "Misc/data_handling.h"
+#include "airbrake/airbrake.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -69,7 +71,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+#define AB_CONTROL
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -84,6 +86,8 @@
 osThreadId defaultTaskHandle;
 osThreadId task_s1Handle;
 osThreadId task_s2Handle;
+
+osThreadId task_ABHandle;
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
@@ -134,6 +138,11 @@ void MX_FREERTOS_Init(void) {
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
+#ifdef AB_CONTROL
+  osThreadDef(task_AB, TK_ab_controller, osPriorityNormal, 0, 256);
+  task_ABHandle = osThreadCreate(osThread(task_AB), NULL);
+  ab_init(&huart6);
+#endif
   /* USER CODE END RTOS_THREADS */
 
   /* USER CODE BEGIN RTOS_QUEUES */
