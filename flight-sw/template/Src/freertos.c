@@ -62,6 +62,7 @@
 #include "Misc/Common.h"
 #include "Misc/data_handling.h"
 #include "airbrake/airbrake.h"
+#include "Misc/sd_sync.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -71,7 +72,10 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define AB_CONTROL
+
+//#define AB_CONTROL
+//#define SDCARD
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -81,13 +85,13 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN Variables */
+osThreadId sdWriteHandle;
+osThreadId task_ABHandle;
 
 /* USER CODE END Variables */
 osThreadId defaultTaskHandle;
 osThreadId task_s1Handle;
 osThreadId task_s2Handle;
-
-osThreadId task_ABHandle;
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
@@ -98,7 +102,6 @@ void StartDefaultTask(void const * argument);
 void TK_task_s1(void const * argument);
 void TK_task_s2(void const * argument);
 
-extern void MX_FATFS_Init(void);
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
 /**
@@ -143,6 +146,11 @@ void MX_FREERTOS_Init(void) {
   task_ABHandle = osThreadCreate(osThread(task_AB), NULL);
   ab_init(&huart6);
 #endif
+
+#ifdef SDCARD
+  osThreadDef(sdWrite, TK_sd_sync, osPriorityBelowNormal, 0, 1024);
+  sdWriteHandle = osThreadCreate(osThread(sdWrite), NULL);
+#endif
   /* USER CODE END RTOS_THREADS */
 
   /* USER CODE BEGIN RTOS_QUEUES */
@@ -166,10 +174,7 @@ void StartDefaultTask(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-	led_set_b(50);
-    osDelay(100);
-	led_set_b( 0);
-    osDelay(100);
+	osDelay(100);
   }
   /* USER CODE END StartDefaultTask */
 }
@@ -184,10 +189,19 @@ void StartDefaultTask(void const * argument)
 void TK_task_s1(void const * argument)
 {
   /* USER CODE BEGIN TK_task_s1 */
+	int i = 0;
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1000);
+	  led_set_b(1000);
+	  // sd card example code
+	  if (!new_sd_data_ready) {
+		  sprintf(sd_buffer, "count %d\n", i++);
+		  new_sd_data_ready = 1;
+	  }
+	  osDelay(1);
+	  led_set_b(0);
+	  osDelay(100);
   }
   /* USER CODE END TK_task_s1 */
 }
