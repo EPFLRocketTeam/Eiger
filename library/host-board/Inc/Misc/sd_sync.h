@@ -5,11 +5,12 @@
  *      Author: Cl�ment Nussbaumer
  */
 
-#include <Misc/datastructs.h>
 #include "cmsis_os.h"
 
-#ifndef DATA_HANDLING_H_
-#define DATA_HANDLING_H_
+#ifndef SD_SYNC_H_
+#define SD_SYNC_H_
+
+#include <stdbool.h>
 
 #ifdef __cplusplus
 extern "C"
@@ -20,9 +21,11 @@ void TK_sd_sync (const void* args);
 
 osStatus initSdFile ();
 
+extern volatile bool new_sd_data_ready;
+extern volatile char sd_buffer[];
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif //DATA_HANDLING_H_
+#endif //SD_SYNC_H_
