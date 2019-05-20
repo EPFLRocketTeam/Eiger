@@ -71,7 +71,7 @@
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
-int r=1000, g=0, b=0;
+int r=BOARD_LED_R, g=BOARD_LED_G, b=BOARD_LED_B;
 /* USER CODE BEGIN PD */
 
 
@@ -113,25 +113,7 @@ void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
   */
 void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN Init */
-#ifdef MAIN_BOARD
-r=0, g=100, b=0;
-#endif
 
-#ifdef BLACK_BOX_BOARD
-r=80, g=50, b=0;
-#endif
-
-#ifdef TELEMETRY_BOARD
-r=0, g=0, b=100;
-#endif
-
-#ifdef AIRBRAKE_BOARD
-r=100, g=0, b=100;
-#endif
-
-#ifdef DEBUG_BOARD
-r=50, g=50, b=50;
-#endif
   /* USER CODE END Init */
 
   /* USER CODE BEGIN RTOS_MUTEX */

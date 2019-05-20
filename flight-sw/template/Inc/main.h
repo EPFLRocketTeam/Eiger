@@ -110,6 +110,58 @@ void Error_Handler(void);
 #define LED_nB_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
 
+// Define board LED colors
+// default
+	#define BOARD_LED_R (1000)
+	#define BOARD_LED_G (   0)
+	#define BOARD_LED_B (   0)
+
+#ifdef BLACK_BOX_BOARD
+	#define BOARD_LED_R (0)
+	#define BOARD_LED_G (100)
+	#define BOARD_LED_B (0)
+#endif
+
+#ifdef TELEMETRY_BOARD
+	#define BOARD_LED_R (80)
+	#define BOARD_LED_G (50)
+	#define BOARD_LED_B (0)
+#endif
+
+#ifdef AIRBRAKE_BOARD
+	#define BOARD_LED_R (100)
+	#define BOARD_LED_G (0)
+	#define BOARD_LED_B (100)
+#endif
+
+#ifdef DEBUG_BOARD
+	#define BOARD_LED_R (50)
+	#define BOARD_LED_G (50)
+	#define BOARD_LED_B (50)
+#endif
+
+// define board config
+#ifdef BLACK_BOX_BOARD
+	#define SDCARD
+// define GPS
+// define sensor
+#endif
+
+#ifdef TELEMETRY_BOARD
+	#define SDCARD
+// define telemetry
+#endif
+
+#ifdef AIRBRAKE_BOARD
+	#define AB_CONTROL
+// define sensor
+#endif
+
+#ifdef DEBUG_BOARD
+
+#endif
+
+
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus
