@@ -8,7 +8,7 @@
 #include "stm32f4xx_hal.h"
 #include "Misc/Common.h"
 #include "FreeRTOS.h"
-#include "led.h"
+
 #include <Telemetry/xbee.h>
 
 osMessageQId xBeeQueueHandle;
@@ -122,7 +122,6 @@ inline void addToBuffer (uint8_t* txData, uint16_t txDataSize)
 
 void sendXbeeFrame ()
 {
-	led_set_rgb(0,0,1000);
   if (osSemaphoreWait (xBeeTxBufferSemHandle, XBEE_UART_TIMEOUT) != osOK)
     {
       return;
@@ -161,8 +160,6 @@ void sendXbeeFrame ()
   HAL_UART_Transmit_DMA (xBee_huart, txDmaBuffer, pos);
 
   currentXbeeTxBufPos = 0;
-  osDelay(10);
-	led_set_rgb(0,0,0);
 }
 
 void HAL_UART_TxCpltCallback (UART_HandleTypeDef *huart)

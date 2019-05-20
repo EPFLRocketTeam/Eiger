@@ -9,8 +9,6 @@
 #include <Misc/sd_sync.h>
 
 #include <string.h>
-#include <cmsis_os.h>
-
 
 extern osMessageQId sdLoggingQueueHandle;
 char buffer[1024];

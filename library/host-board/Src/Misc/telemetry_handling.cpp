@@ -77,19 +77,10 @@ void TK_telemetry_data (void const * args)
   uint32_t telemetrySeqNumber = 0;
 
   baro.temperature = 20;
-  can_current_msg.id = 0;
-  can_current_msg.timestamp = 0;
-  can_current_msg.data = 0;
 
   for (;;)
     {
-	  can_current_msg.id++;
-	  if (can_current_msg.id > 10) {
-		  can_current_msg.id = 0;
-	  }
-	  can_current_msg.timestamp++;
-	  can_current_msg.data++;
-	  //while (can_readFrame()) { // check if new data
+	  while (can_readFrame()) { // check if new data
 
 	    // add to SD card
 	    sendSDcard(can_current_msg.id_CAN, can_current_msg.timestamp, can_current_msg.id, can_current_msg.data);
@@ -130,8 +121,8 @@ void TK_telemetry_data (void const * args)
 	    	new_baro = 0;
 	    	new_imu  = 0;
 	    }
-	  //}
+	  }
 
-      //osDelay (0);
+      osDelay (1);
     }
 }
