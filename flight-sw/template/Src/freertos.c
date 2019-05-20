@@ -71,12 +71,7 @@
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
-int r=BOARD_LED_R, g=BOARD_LED_G, b=BOARD_LED_B;
 /* USER CODE BEGIN PD */
-
-
-//#define AB_CONTROL
-//#define SDCARD
 
 /* USER CODE END PD */
 
@@ -89,6 +84,7 @@ int r=BOARD_LED_R, g=BOARD_LED_G, b=BOARD_LED_B;
 /* USER CODE BEGIN Variables */
 osThreadId sdWriteHandle;
 osThreadId task_ABHandle;
+osThreadId task_LEDHandle;
 
 /* USER CODE END Variables */
 osThreadId defaultTaskHandle;
@@ -143,6 +139,9 @@ void MX_FREERTOS_Init(void) {
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
+  osThreadDef(task_LED, TK_led_handler, osPriorityNormal, 0, 256);
+  task_LEDHandle = osThreadCreate(osThread(task_LED), NULL);
+
 #ifdef AB_CONTROL
   osThreadDef(task_AB, TK_ab_controller, osPriorityNormal, 0, 256);
   task_ABHandle = osThreadCreate(osThread(task_AB), NULL);
@@ -191,16 +190,12 @@ void StartDefaultTask(void const * argument)
 void TK_task_s1(void const * argument)
 {
   /* USER CODE BEGIN TK_task_s1 */
-  led_set_rgb(r,g,b);
   osDelay(1000);
 
   /* Infinite loop */
   for(;;)
   {
-	  led_set_rgb(r,g,b);
-	  osDelay(100);
-	  led_set_rgb(0,0,0);
-	  osDelay(100);
+	  osDelay(1000);
   }
   /* USER CODE END TK_task_s1 */
 }
