@@ -21,8 +21,12 @@ volatile uint16_t b_list[MAX_N_THREADS] = {0};
 void TK_led_handler(void const *arg) {
 	led_init();
 
+#ifdef BOARD_LED_R // check if default color is defined
 	led_set_rgb(BOARD_LED_R, BOARD_LED_G, BOARD_LED_B);
 	osDelay(LED_INIT_DELAY);
+	led_set_rgb(0, 0, 0);
+	osDelay(LED_TK_BREAK);
+#endif
 
 	while (1) {
 		for (int i=0 ; i<n_threads ; i++) {
