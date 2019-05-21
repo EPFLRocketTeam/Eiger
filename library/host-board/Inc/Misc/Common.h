@@ -21,16 +21,7 @@
 #define SIMULATION 0 // 0 production mode, 1 simulation mode
 #define NOSECONE
 
-//#define FLAPPYFLAPPY
-#define SHURIKEN
-
-#if defined(FLAPPYFLAPPY) && defined(SHURIKEN)
-#error SHURIKEN and FLAPPYFLAPPY cannot be both defined
-#endif
-
-#if defined(NOSECONE) && defined(CENTRALBODY)
-#error CENTRALBODY and NOSECONE cannot be both defined
-#endif
+#define ADJUSTED_SEA_LEVEL_PRESSURE 1018.6
 
 extern TIM_HandleTypeDef htim7;
 
