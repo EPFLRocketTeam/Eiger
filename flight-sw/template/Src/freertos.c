@@ -63,6 +63,7 @@
 #include "Misc/data_handling.h"
 #include "airbrake/airbrake.h"
 #include "Misc/sd_sync.h"
+#include "Sensors/sensor_board.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -84,6 +85,7 @@
 /* USER CODE BEGIN Variables */
 osThreadId sdWriteHandle;
 osThreadId task_ABHandle;
+osThreadId sensorBoardHandle;
 osThreadId task_LEDHandle;
 
 /* USER CODE END Variables */
@@ -151,6 +153,11 @@ void MX_FREERTOS_Init(void) {
 #ifdef SDCARD
   osThreadDef(sdWrite, TK_sd_sync, osPriorityBelowNormal, 0, 1024);
   sdWriteHandle = osThreadCreate(osThread(sdWrite), NULL);
+#endif
+
+#ifdef SENSOR
+  osThreadDef(sensor_board, TK_sensor_board, osPriorityNormal, 0, 1024);
+  sensorBoardHandle = osThreadCreate(osThread(sensor_board), NULL);
 #endif
   /* USER CODE END RTOS_THREADS */
 

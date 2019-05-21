@@ -116,6 +116,12 @@ void Error_Handler(void);
 	#define BOARD_LED_G (   0)
 	#define BOARD_LED_B (   0)
 
+#ifdef MAIN_BOARD
+	#define BOARD_LED_R (0)
+	#define BOARD_LED_G (100)
+	#define BOARD_LED_B (0)
+#endif
+
 #ifdef BLACK_BOX_BOARD
 	#define BOARD_LED_R (0)
 	#define BOARD_LED_G (100)
@@ -141,10 +147,14 @@ void Error_Handler(void);
 #endif
 
 // define board config
+#ifdef MAIN_BOARD
+
+#endif
+
 #ifdef BLACK_BOX_BOARD
 	#define SDCARD
+	#define SENSOR
 // define GPS
-// define sensor
 #endif
 
 #ifdef TELEMETRY_BOARD
@@ -154,7 +164,7 @@ void Error_Handler(void);
 
 #ifdef AIRBRAKE_BOARD
 	#define AB_CONTROL
-// define sensor
+	#define SENSOR
 #endif
 
 #ifdef DEBUG_BOARD
