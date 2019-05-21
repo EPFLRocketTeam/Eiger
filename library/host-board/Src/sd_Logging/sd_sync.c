@@ -24,9 +24,12 @@ const TCHAR events_file_header[] = "NOT USED timestamp, event_description\r\n";
 
 volatile char sd_buffer[2048];
 
+int led_sdcard_id;
+
 osStatus initSdFile ()
 {
   MX_FATFS_Init ();
+  led_sdcard_id = led_register_TK();
 
   if (disk_initialize (0) != 0)
     {
@@ -79,7 +82,7 @@ void TK_sd_sync (void const* pvArgs)
   if (initSdFile () != osOK)
     {
 	  while (1) {
-    	  led_set_r(50);
+		  led_set_TK_rgb(led_sdcard_id, 50, 0, 0);
 		  osDelay (1000);
 	  }
     }
@@ -112,9 +115,9 @@ void TK_sd_sync (void const* pvArgs)
       }
 
       if (result == FR_OK) {
-    	  led_set_g(50);
+    	  led_set_TK_rgb(led_sdcard_id, 0, 50, 0);
       } else {
-    	  led_set_r(255);
+    	  led_set_TK_rgb(led_sdcard_id, 255, 0 ,0);
       }
       osDelay(1);
     }
