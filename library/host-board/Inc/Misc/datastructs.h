@@ -44,6 +44,16 @@ typedef struct
 
 typedef struct
 {
+  float32_t hdop;
+  float32_t lat;
+  float32_t lon;
+  int32_t altitude;
+  uint8_t sats;
+} GPS_data;
+
+
+typedef struct
+{
   void* ptr;
   uint16_t size;
 } String_Message;

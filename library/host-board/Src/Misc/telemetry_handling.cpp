@@ -53,6 +53,22 @@ Telemetry_Message createTelemetryDatagram (IMU_data* imu_data, BARO_data* baro_d
   return builder.finalizeDatagram ();
 }
 
+
+Telemetry_Message createGPSDatagram (uint32_t seqNumber, GPS_data gpsData)
+{
+  DatagramBuilder builder = DatagramBuilder (GPS_DATAGRAM_PAYLOAD_SIZE, GPS, seqNumber++);
+
+  builder.write32<uint32_t> (HAL_GetTick ());
+  builder.write8 (gpsData.sats);
+  builder.write32<float32_t> (gpsData.hdop);
+  builder.write32<float32_t> (gpsData.lat);
+  builder.write32<float32_t> (gpsData.lon);
+  builder.write32<int32_t> (gpsData.altitude);
+
+  return builder.finalizeDatagram ();
+}
+
+
 void sendSDcard(uint32_t id_can, uint32_t timestamp, uint8_t id, uint32_t data) {
    static uint32_t sdSeqNumber = 0;
    sdSeqNumber++;
@@ -67,11 +83,13 @@ void TK_telemetry_data (void const * args)
   // init
   IMU_data  imu  = {{0,0,0},{0,0,0}, 0};
   BARO_data baro = {0,0,0};
+  GPS_data gpsData = {0};
   uint32_t meas_time = HAL_GetTick();
   uint32_t tele_time = HAL_GetTick();
 
   bool new_baro = 0;
   bool new_imu = 0;
+  bool new_gps = 0;
 
   osDelay (1000); // Wait for the other threads to be ready
   uint32_t telemetrySeqNumber = 0;
@@ -110,9 +128,24 @@ void TK_telemetry_data (void const * args)
         case DATA_ID_GYRO_Z:
           imu.eulerAngles.z = ((float32_t) ((int32_t) can_current_msg.data));
           break;
+        case DATA_ID_GPS_HDOP:
+		  gpsData.hdop = ((float32_t) ((int32_t) can_current_msg.data)) / 1e3;
+		  break;
+        case DATA_ID_GPS_LAT:
+		  gpsData.lat = ((float32_t) ((int32_t) can_current_msg.data))  / 1e6;
+		  break;
+        case DATA_ID_GPS_LONG:
+		  gpsData.lon = ((float32_t) ((int32_t) can_current_msg.data))  / 1e6;
+		  break;
+        case DATA_ID_GPS_ALTITUDE:
+		  gpsData.altitude = ((int32_t) can_current_msg.data);
+		  break;
+        case DATA_ID_GPS_SATS:
+		  gpsData.sats = ((uint8_t) ((int32_t) can_current_msg.data));
+		  new_gps = 1;
+		  break;
 	    }
 
-	    sendSDcard(can_current_msg.id_CAN, can_current_msg.timestamp, can_current_msg.id, can_current_msg.data);
 	    // if both sensor data are new or timeout
 	    if ((new_baro || new_imu) && (HAL_GetTick() - tele_time > TELE_TIMEMIN)) {
 	    	Telemetry_Message m = createTelemetryDatagram (&imu, &baro, meas_time, telemetrySeqNumber++);
@@ -120,6 +153,17 @@ void TK_telemetry_data (void const * args)
 	    	tele_time = HAL_GetTick();
 	    	new_baro = 0;
 	    	new_imu  = 0;
+	    }
+
+	    if (new_gps) {
+	    	Telemetry_Message m = createGPSDatagram (telemetrySeqNumber++, gpsData);
+	    	osMessagePut (xBeeQueueHandle, (uint32_t) &m, 50);
+	    	// reset all the data
+	    	gpsData.hdop     = 0xffffffff;
+	    	gpsData.lat      = 0xffffffff;
+	    	gpsData.lon      = 0xffffffff;
+	    	gpsData.altitude = 0;
+	    	gpsData.sats     = 0;
 	    }
 	  }
 

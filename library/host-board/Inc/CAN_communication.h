@@ -30,10 +30,19 @@ extern volatile CAN_msg can_current_msg;
 #define DATA_ID_GYRO_Y 5
 #define DATA_ID_GYRO_Z 6
 
+#define DATA_ID_GPS_HDOP      7
+#define DATA_ID_GPS_LAT       8
+#define DATA_ID_GPS_LONG      9
+#define DATA_ID_GPS_ALTITUDE 10
+#define DATA_ID_GPS_SATS     11
+
 // Define all the board ID's (lower means higher priority for CAN protocol)
-#define ID_MASTER 0
-#define ID_GPS_SENSOR 3
-#define ID_TELEMETRY_SD 2
+#define CAN_ID_MAIN_BOARD 0
+#define CAN_ID_BLACK_BOX_BOARD 1
+#define CAN_ID_TELEMETRY_BOARD 2
+#define CAN_ID_AIBRAKE_BOARD 3
+#define CAN_ID_DEBUG_BOARD 9
+#define CAN_ID_DEFAULT 10
 
 
 void CAN_Config(uint32_t id);
