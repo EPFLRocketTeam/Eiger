@@ -41,11 +41,17 @@ void TK_led_handler(void const *arg) {
 
 // return id if sucessfull, else -1
 int led_register_TK() {
+	int val = 0;
+
+	portDISABLE_INTERRUPTS();
 	if (n_threads < MAX_N_THREADS) {
-		return n_threads++;
+		val = n_threads++;
 	} else {
 		return -1;
 	}
+	portENABLE_INTERRUPTS();
+
+	return val;
 }
 
 

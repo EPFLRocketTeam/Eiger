@@ -154,13 +154,15 @@ void Error_Handler(void);
 
 // define board config
 #ifdef MAIN_BOARD
-
+	#define GPS
+	// Kalman
 #endif
 
 #ifdef BLACK_BOX_BOARD
 	#define SDCARD
 	#define SENSOR
-// define GPS
+	#define GPS
+	// special log
 #endif
 
 #ifdef TELEMETRY_BOARD

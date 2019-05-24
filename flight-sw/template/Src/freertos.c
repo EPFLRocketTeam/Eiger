@@ -64,6 +64,7 @@
 #include "airbrake/airbrake.h"
 #include "Misc/sd_sync.h"
 #include "Sensors/sensor_board.h"
+#include "Sensors/GPS_board.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -87,6 +88,7 @@ osThreadId sdWriteHandle;
 osThreadId task_ABHandle;
 osThreadId sensorBoardHandle;
 osThreadId task_LEDHandle;
+osThreadId task_GPSHandle;
 
 /* USER CODE END Variables */
 osThreadId defaultTaskHandle;
@@ -144,14 +146,20 @@ void MX_FREERTOS_Init(void) {
   osThreadDef(task_LED, TK_led_handler, osPriorityNormal, 0, 256);
   task_LEDHandle = osThreadCreate(osThread(task_LED), NULL);
 
+#ifdef GPS
+  osThreadDef(task_GPSHandle, TK_GPS_board, osPriorityNormal, 0, 256);
+  task_GPSHandle = osThreadCreate(osThread(task_GPSHandle), NULL);
+  gps_init(&huart6);
+#endif
+
 #ifdef AB_CONTROL
   osThreadDef(task_AB, TK_ab_controller, osPriorityNormal, 0, 256);
   task_ABHandle = osThreadCreate(osThread(task_AB), NULL);
-  ab_init(&huart6);
+  ab_init(&huart1);
 #endif
 
 #ifdef SDCARD
-  osThreadDef(sdWrite, TK_sd_sync, osPriorityBelowNormal, 0, 1024);
+  osThreadDef(sdWrite, TK_sd_sync, osPriorityNormal, 0, 1024);
   sdWriteHandle = osThreadCreate(osThread(sdWrite), NULL);
 #endif
 
@@ -176,7 +184,7 @@ void MX_FREERTOS_Init(void) {
 void StartDefaultTask(void const * argument)
 {
   /* init code for FATFS */
-  MX_FATFS_Init();
+  //MX_FATFS_Init();
 
   /* USER CODE BEGIN StartDefaultTask */
   /* Infinite loop */
