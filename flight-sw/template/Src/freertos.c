@@ -89,6 +89,9 @@ osThreadId task_ABHandle;
 osThreadId sensorBoardHandle;
 osThreadId task_LEDHandle;
 osThreadId task_GPSHandle;
+osThreadId xBeeTelemetryHandle;
+osThreadId telemetry_mgmtHandle;
+
 
 /* USER CODE END Variables */
 osThreadId defaultTaskHandle;
@@ -167,6 +170,16 @@ void MX_FREERTOS_Init(void) {
   osThreadDef(sensor_board, TK_sensor_board, osPriorityNormal, 0, 1024);
   sensorBoardHandle = osThreadCreate(osThread(sensor_board), NULL);
 #endif
+
+#ifdef XBEE
+  xbee_freertos_init(&huart1);
+  osThreadDef(xBeeTelemetry, TK_xBeeTelemetry, osPriorityNormal, 0, 128);
+  xBeeTelemetryHandle = osThreadCreate(osThread(xBeeTelemetry), NULL);
+
+  osThreadDef(telemetry_mgmt, TK_telemetry_data, osPriorityNormal, 0, 1024);
+  telemetry_mgmtHandle = osThreadCreate(osThread(telemetry_mgmt), NULL);
+#endif
+
   /* USER CODE END RTOS_THREADS */
 
   /* USER CODE BEGIN RTOS_QUEUES */

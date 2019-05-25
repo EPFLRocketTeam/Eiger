@@ -97,7 +97,7 @@ void TK_sd_sync (void const* pvArgs)
   f_sync (&eventsFile);
   lastSync = HAL_GetTick ();
 
-  osDelay (500);
+  osDelay (1000);
   FRESULT result = 0;
 
   for (;;)

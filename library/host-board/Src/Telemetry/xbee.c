@@ -8,13 +8,13 @@
 #include "stm32f4xx_hal.h"
 #include "Misc/Common.h"
 #include "FreeRTOS.h"
-
+#include "led.h"
 #include <Telemetry/xbee.h>
 
 osMessageQId xBeeQueueHandle;
 osSemaphoreId xBeeTxBufferSemHandle;
 
-extern UART_HandleTypeDef* xBee_huart;
+UART_HandleTypeDef* xBee_huart;
 
 // UART settings
 #define XBEE_UART_TIMEOUT 30
@@ -44,17 +44,23 @@ uint8_t payloadBuffer[XBEE_PAYLOAD_MAX_SIZE];
 uint8_t txDmaBuffer[2 * XBEE_PAYLOAD_MAX_SIZE + XBEE_CHECKSUM_SIZE + XBEE_FRAME_BEGINNING_SIZE];
 uint16_t currentXbeeTxBufPos = 0;
 
-void xbee_freertos_init() {
+int led_xbee_id;
+
+void xbee_freertos_init(UART_HandleTypeDef *huart) {
 	osSemaphoreDef(xBeeTxBufferSem);
 	xBeeTxBufferSemHandle = osSemaphoreCreate(osSemaphore(xBeeTxBufferSem), 1);
 
 	osMessageQDef(xBeeQueue, 16, Telemetry_Message);
 	xBeeQueueHandle = osMessageCreate(osMessageQ(xBeeQueue), NULL);
 	vQueueAddToRegistry (xBeeQueueHandle, "xBee incoming queue");
+
+	xBee_huart = huart;
 }
 
 void TK_xBeeTelemetry (const void* args)
 {
+  led_xbee_id = led_register_TK();
+  led_set_TK_rgb(led_xbee_id, 100, 50, 0);
 
   initXbee ();
   uint32_t packetStartTime = HAL_GetTick();
@@ -80,6 +86,8 @@ void TK_xBeeTelemetry (const void* args)
           sendData (m->ptr, m->size);
           vPortFree (m->ptr);
         }
+
+      osDelay(10);
     }
 }
 
@@ -124,6 +132,7 @@ void sendXbeeFrame ()
 {
   if (osSemaphoreWait (xBeeTxBufferSemHandle, XBEE_UART_TIMEOUT) != osOK)
     {
+	  led_set_TK_rgb(led_xbee_id, 50, 0, 0);
       return;
     }
 
@@ -160,6 +169,8 @@ void sendXbeeFrame ()
   HAL_UART_Transmit_DMA (xBee_huart, txDmaBuffer, pos);
 
   currentXbeeTxBufPos = 0;
+
+  led_set_TK_rgb(led_xbee_id, 0, 50, 0);
 }
 
 void HAL_UART_TxCpltCallback (UART_HandleTypeDef *huart)
@@ -169,7 +180,6 @@ void HAL_UART_TxCpltCallback (UART_HandleTypeDef *huart)
 
 void initXbee ()
 {
-
   uint8_t checksum = 0;
   for (int i = 0; i < sizeof(XBEE_FRAME_OPTIONS); ++i)
     {

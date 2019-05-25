@@ -167,7 +167,7 @@ void Error_Handler(void);
 
 #ifdef TELEMETRY_BOARD
 	#define SDCARD
-// define telemetry
+	#define XBEE
 #endif
 
 #ifdef AIRBRAKE_BOARD
