@@ -164,6 +164,7 @@ void TK_telemetry_data (void const * args)
 	    	gpsData.lon      = 0xffffffff;
 	    	gpsData.altitude = 0;
 	    	gpsData.sats     = 0;
+	    	new_gps = 0;
 	    }
 	  }
 

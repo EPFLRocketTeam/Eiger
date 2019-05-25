@@ -26,7 +26,7 @@ void TK_GPS_board(void const * argument)
 {
 	uint8_t rx;
 	char tx[300];
-	char line[MINMEA_MAX_LENGTH];
+	char line[MINMEA_MAX_LENGTH+10];
 	struct minmea_sentence_gga gga;
 
 	uint8_t idx = 0;
@@ -38,10 +38,14 @@ void TK_GPS_board(void const * argument)
 	float hdop = 0.0f;
 	int   sats = 0;
 
+	int overrun = 0;
+
 	led_set_TK_rgb(led_gps_id, 150, 150, 150);
+	osDelay(1000);
 
 	for (;;)
 	{
+		overrun = 0;
 		while (1)
 		{
 			HAL_UART_Receive(gps_huart, &rx, 1, 100);
@@ -61,12 +65,17 @@ void TK_GPS_board(void const * argument)
 				break;
 			}
 			line[++idx] = rx;
+			if (idx>MINMEA_MAX_LENGTH) {
+				line[++idx] = '\0';
+				overrun = 1;
+				break;
+			}
 		}
 		//INFO(line);
 		//INFO("\n");
-		if (minmea_sentence_id(line, false) == MINMEA_SENTENCE_GGA)
+		if (!overrun && minmea_sentence_id(line, false) == MINMEA_SENTENCE_GGA)
 		{
-			minmea_parse_gga(&gga, line);
+			if (minmea_parse_gga(&gga, line)) {
 
 			latitude  = minmea_tocoord(&(gga.latitude));
 			longitude = minmea_tocoord(&(gga.longitude));
@@ -86,9 +95,9 @@ void TK_GPS_board(void const * argument)
 			}
 			else
 			{
-
-				sprintf(tx, "Waiting for a fix... (%"PRIu32")\n", cntr++);
+				can_setFrame((int32_t)sats+2, DATA_ID_GPS_SATS, HAL_GetTick());
 				led_set_TK_rgb(led_gps_id, 0, 0, 150);
+			}
 			}
 			//INFO(tx);
 		}
