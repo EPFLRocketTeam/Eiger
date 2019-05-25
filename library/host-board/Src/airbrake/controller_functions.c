@@ -13,7 +13,7 @@
 
 #define MAX_OPENING_DEG 172.8
 #define MIN_OPENING_DEG 0
-#define ANGLE_HELLOWORLD 100
+#define ANGLE_HELLOWORLD 10
 
 
 UART_HandleTypeDef* airbrake_huart;
@@ -43,7 +43,7 @@ int deg2inc(float degrees_angle)
 
 char* do_string_command (char first, char second, int number)
 {
-  sprintf(command_string, "%c%c%d\r", first, second, number);
+  sprintf(command_string, "%c%c%d\n", first, second, number);
   return command_string; //is it really needed ?
 }
 
@@ -51,7 +51,7 @@ void motor_goto_position_inc (int position_inc)
 {
   char command[12];
   do_string_command ('L', 'A', position_inc);
-  sprintf(command, "%s%s", command_string, "M\r");
+  sprintf(command, "%s%s", command_string, "M\n");
   transmit_command(command, strlen(command));
   // ADD DELAY HERE; THE PERIOD DEPENDS ON KALMAN FILTER FREQUENCY....
   return;
@@ -78,7 +78,7 @@ void aerobrakes_control_init (void)
 //  command = "SP10000\r";              MAXIMUM SPEED in inc/min
 //  HAL_UART_Transmit_DMA(&huart1, command, 8);
   sprintf(command, "%s%s%s%s%s%s%s", "POR1\r", "I1\r", "PP255\r", "PD5\r",
-      "LPC3000\r", "LCC3000\r", "EN\r");
+      "LPC3000\r", "LCC3000\r", "EN\n");
   transmit_command(command, 37);
   return;
 }
@@ -87,6 +87,7 @@ void full_open (void)
 {
   int angle_open_inc = deg2inc (MAX_OPENING_DEG);
   motor_goto_position_inc (angle_open_inc);
+
   return;
 }
 
@@ -99,11 +100,12 @@ void full_close (void)
 
 void aerobrake_helloworld (void)
 {
+	transmit_command("EN\n", 3);
 	led_set_rgb(0,0,255);
-  int angle_helloworld_inc = deg2inc(ANGLE_HELLOWORLD);
-  motor_goto_position_inc(angle_helloworld_inc);
-  osDelay(500);
-  full_close();
+	int angle_helloworld_inc = deg2inc(ANGLE_HELLOWORLD);
+	motor_goto_position_inc(angle_helloworld_inc);
+	osDelay(500);
+	full_close();
 	led_set_rgb(0,255,0);
   return;
 }
