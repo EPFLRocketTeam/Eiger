@@ -38,36 +38,44 @@ struct bno055_accel_float_t accel;
 struct bno055_gyro_float_t gyro;
 struct bno055_mag_float_t mag;
 
-int led_sensor_id;
+int led_sensor_id_imu, led_sensor_id_baro;
 
+int set_sensor_led(int id, int flag) {
+	if (flag) { // success
+		led_set_TK_rgb(id, 0, 50, 0);
+	} else { // fail
+		led_set_TK_rgb(id, 500, 0, 0);
+	}
+	return flag;
+}
 
 //Sensor Board thread
 void TK_sensor_board(void const * argument)
 {
+	int imu_init = 0, baro_init=0;
 	osDelay(500);
 
-	led_sensor_id = led_register_TK();
+	led_sensor_id_imu  = led_register_TK();
+	led_sensor_id_baro = led_register_TK();
 
-	//INFO("\nInitialising sensors...\n");
-	while(init_bme() != BME280_OK ||
-			init_bno() != BNO055_SUCCESS)
-	{
-		//INFO("Initialisation failed.\n");
-		led_set_TK_rgb(led_sensor_id, 500, 0, 0);
-		osDelay(1000);
-		//INFO("Retrying...\n");
-	}
+	for(;;) {
+		if (imu_init) {
+			set_sensor_led(led_sensor_id_imu, fetch_bno() == BNO055_SUCCESS);
+		} else {
+			imu_init = set_sensor_led(led_sensor_id_imu, init_bno() == BNO055_SUCCESS);
+		}
 
-	//INFO("Initialisation completed successfully\n");
-	led_set_TK_rgb(led_sensor_id, 0, 50, 0);
+		if (baro_init) {
+			set_sensor_led(led_sensor_id_baro, fetch_bme() == BME280_OK);
+		} else {
+			baro_init = set_sensor_led(led_sensor_id_baro, init_bme() == BME280_OK);
+		}
 
-	for(;;)
-	{
-		if(fetch_bme() != BME280_OK || fetch_bno() != BNO055_SUCCESS)
-			led_set_TK_rgb(led_sensor_id, 0, 0, 1000);
-		else
-			led_set_TK_rgb(led_sensor_id, 0, 50, 0);
 		osDelay(10);
+
+		if(!baro_init && !imu_init) {
+			osDelay(1000);
+		}
 	}
 }
 
