@@ -338,6 +338,8 @@ class PCANBasic:
         #     
         if platform.system() == 'Windows':
             self.__m_dllBasic = windll.LoadLibrary("PCANBasic")
+        elif platform.system() == 'Darwin':
+            self.__m_dllBasic = cdll.LoadLibrary('libPCBUSB.dylib')
         else:
             self.__m_dllBasic = cdll.LoadLibrary("libpcanbasic.so")
         if self.__m_dllBasic == None:
