@@ -10,6 +10,8 @@
 #include <cmsis_os.h>
 #include "airbrake/airbrake.h"
 
+#include "CAN_communication.h"
+
 
 //#include "Airbrakes/controller_functions.h"
 //#include <Misc/rocket_constants.h>
@@ -22,11 +24,12 @@ void TK_ab_controller (void const * argument)
   osDelay (2000);
 
   aerobrakes_control_init();
+  aerobrake_helloworld ();
 
   for (;;)
     {
-      aerobrake_helloworld ();
-      osDelay (1000);
+	  full_open();
+      osDelay (1);
     }
 
   osDelay (1000);
