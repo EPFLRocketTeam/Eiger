@@ -469,7 +469,7 @@ static void MX_GPIO_Init(void)
 
 void initPeripherals ()
 {
-  airbrake_huart = &huart1;
+  airbrake_huart = &huart6;
 }
 
 /* USER CODE END 4 */

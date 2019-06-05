@@ -75,8 +75,8 @@ int r=1000, g=0, b=0;
 /* USER CODE BEGIN PD */
 
 
-//#define AB_CONTROL
-//#define SDCARD
+#define AB_CONTROL
+#define SDCARD
 
 /* USER CODE END PD */
 
