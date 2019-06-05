@@ -75,7 +75,7 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "CAN_communication.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -109,6 +109,76 @@ void Error_Handler(void);
 #define LED_nB_Pin GPIO_PIN_15
 #define LED_nB_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
+
+// Define board LED colors
+// default
+	#define BOARD_LED_R (1000)
+	#define BOARD_LED_G (   0)
+	#define BOARD_LED_B (   0)
+	#define CAN_ID CAN_ID_DEFAULT
+
+#ifdef MAIN_BOARD
+	#define BOARD_LED_R (0)
+	#define BOARD_LED_G (100)
+	#define BOARD_LED_B (0)
+	#define CAN_ID CAN_ID_MAIN_BOARD
+#endif
+
+#ifdef BLACK_BOX_BOARD
+	#define BOARD_LED_R (0)
+	#define BOARD_LED_G (100)
+	#define BOARD_LED_B (0)
+	#define CAN_ID CAN_ID_BLACK_BOX_BOARD
+#endif
+
+#ifdef TELEMETRY_BOARD
+	#define BOARD_LED_R (80)
+	#define BOARD_LED_G (50)
+	#define BOARD_LED_B (0)
+	#define CAN_ID CAN_ID_AIBRAKE_BOARD
+#endif
+
+#ifdef AIRBRAKE_BOARD
+	#define BOARD_LED_R (100)
+	#define BOARD_LED_G (0)
+	#define BOARD_LED_B (100)
+	#define CAN_ID CAN_ID_MAIN_BOARD
+#endif
+
+#ifdef DEBUG_BOARD
+	#define BOARD_LED_R (50)
+	#define BOARD_LED_G (50)
+	#define BOARD_LED_B (50)
+	#define CAN_ID CAN_ID_DEBUG_BOARD
+#endif
+
+// define board config
+#ifdef MAIN_BOARD
+	#define GPS
+	// Kalman
+#endif
+
+#ifdef BLACK_BOX_BOARD
+	#define SDCARD
+	#define SENSOR
+	#define GPS
+	// special log
+#endif
+
+#ifdef TELEMETRY_BOARD
+	#define SDCARD
+	#define XBEE
+#endif
+
+#ifdef AIRBRAKE_BOARD
+	#define AB_CONTROL
+	#define SENSOR
+#endif
+
+#ifdef DEBUG_BOARD
+
+#endif
+
 
 /* USER CODE END Private defines */
 

@@ -150,7 +150,7 @@ int main(void)
 
 
   led_init();
-  //CAN_Config(0);
+  CAN_Config(CAN_ID);
 
   /* USER CODE END 2 */
 

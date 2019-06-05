@@ -8,6 +8,8 @@
 #ifndef AIRBRAKE_H_
 #define AIRBRAKE_H_
 
+#include "usart.h"
+
 void TK_ab_controller (void const * argument);
 
 void ab_init(UART_HandleTypeDef *ab_huart);

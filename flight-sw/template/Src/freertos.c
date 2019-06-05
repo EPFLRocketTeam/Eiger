@@ -63,6 +63,8 @@
 #include "Misc/data_handling.h"
 #include "airbrake/airbrake.h"
 #include "Misc/sd_sync.h"
+#include "Sensors/sensor_board.h"
+#include "Sensors/GPS_board.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -71,7 +73,6 @@
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
-int r=1000, g=0, b=0;
 /* USER CODE BEGIN PD */
 
 
@@ -89,6 +90,12 @@ int r=1000, g=0, b=0;
 /* USER CODE BEGIN Variables */
 osThreadId sdWriteHandle;
 osThreadId task_ABHandle;
+osThreadId sensorBoardHandle;
+osThreadId task_LEDHandle;
+osThreadId task_GPSHandle;
+osThreadId xBeeTelemetryHandle;
+osThreadId telemetry_mgmtHandle;
+
 
 /* USER CODE END Variables */
 osThreadId defaultTaskHandle;
@@ -113,25 +120,7 @@ void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
   */
 void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN Init */
-#ifdef MAIN_BOARD
-r=0, g=100, b=0;
-#endif
 
-#ifdef BLACK_BOX_BOARD
-r=80, g=50, b=0;
-#endif
-
-#ifdef TELEMETRY_BOARD
-r=0, g=0, b=100;
-#endif
-
-#ifdef AIRBRAKE_BOARD
-r=100, g=0, b=100;
-#endif
-
-#ifdef DEBUG_BOARD
-r=50, g=50, b=50;
-#endif
   /* USER CODE END Init */
 
   /* USER CODE BEGIN RTOS_MUTEX */
@@ -161,6 +150,15 @@ r=50, g=50, b=50;
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
+  osThreadDef(task_LED, TK_led_handler, osPriorityNormal, 0, 256);
+  task_LEDHandle = osThreadCreate(osThread(task_LED), NULL);
+
+#ifdef GPS
+  osThreadDef(task_GPSHandle, TK_GPS_board, osPriorityNormal, 0, 256);
+  task_GPSHandle = osThreadCreate(osThread(task_GPSHandle), NULL);
+  gps_init(&huart6);
+#endif
+
 #ifdef AB_CONTROL
   osThreadDef(task_AB, TK_ab_controller, osPriorityNormal, 0, 256);
   task_ABHandle = osThreadCreate(osThread(task_AB), NULL);
@@ -168,9 +166,24 @@ r=50, g=50, b=50;
 #endif
 
 #ifdef SDCARD
-  osThreadDef(sdWrite, TK_sd_sync, osPriorityBelowNormal, 0, 1024);
+  osThreadDef(sdWrite, TK_sd_sync, osPriorityNormal, 0, 1024);
   sdWriteHandle = osThreadCreate(osThread(sdWrite), NULL);
 #endif
+
+#ifdef SENSOR
+  osThreadDef(sensor_board, TK_sensor_board, osPriorityNormal, 0, 1024);
+  sensorBoardHandle = osThreadCreate(osThread(sensor_board), NULL);
+#endif
+
+#ifdef XBEE
+  xbee_freertos_init(&huart1);
+  osThreadDef(xBeeTelemetry, TK_xBeeTelemetry, osPriorityNormal, 0, 128);
+  xBeeTelemetryHandle = osThreadCreate(osThread(xBeeTelemetry), NULL);
+
+  osThreadDef(telemetry_mgmt, TK_telemetry_data, osPriorityNormal, 0, 1024);
+  telemetry_mgmtHandle = osThreadCreate(osThread(telemetry_mgmt), NULL);
+#endif
+
   /* USER CODE END RTOS_THREADS */
 
   /* USER CODE BEGIN RTOS_QUEUES */
@@ -188,7 +201,7 @@ r=50, g=50, b=50;
 void StartDefaultTask(void const * argument)
 {
   /* init code for FATFS */
-  MX_FATFS_Init();
+  //MX_FATFS_Init();
 
   /* USER CODE BEGIN StartDefaultTask */
   /* Infinite loop */
@@ -209,16 +222,12 @@ void StartDefaultTask(void const * argument)
 void TK_task_s1(void const * argument)
 {
   /* USER CODE BEGIN TK_task_s1 */
-  led_set_rgb(r,g,b);
   osDelay(1000);
 
   /* Infinite loop */
   for(;;)
   {
-	  led_set_rgb(r,g,b);
-	  osDelay(100);
-	  led_set_rgb(0,0,0);
-	  osDelay(100);
+	  osDelay(1000);
   }
   /* USER CODE END TK_task_s1 */
 }

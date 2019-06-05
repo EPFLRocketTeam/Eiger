@@ -152,7 +152,7 @@ int main(void)
 
   xBee_huart = &huart1;
 
-  CAN_Config(ID_TELEMETRY_SD);
+  CAN_Config(CAN_ID_TELEMETRY_BOARD);
   /* USER CODE END 2 */
 
   /* Call init function for freertos objects (in freertos.c) */
