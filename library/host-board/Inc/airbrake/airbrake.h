@@ -16,12 +16,15 @@ void ab_init(UART_HandleTypeDef *ab_huart);
 
 void controller_test(void);
 
-void aerobrakes_control_init(void);
+int aerobrakes_control_init(void);
 
 void full_close(void);
 void full_open(void);
 
 void aerobrake_helloworld(void);
 void motor_goto_position_inc(int position_inc);
+
+void command_aerobrake_controller (float altitude, float speed);
+float angle_tab (float altitude, float speed);
 
 #endif /* AIRBRAKE_H_ */

@@ -53,7 +53,23 @@ host-board/Src/airbrake/airbrakes.o: \
  /Users/Alberic/Desktop/EPFL/team_rocket/SW/Eiger/library/STM32Cube_FW_F4_V1.23.0/Middlewares/Third_Party/FreeRTOS/Source/include/queue.h \
  /Users/Alberic/Desktop/EPFL/team_rocket/SW/Eiger/library/STM32Cube_FW_F4_V1.23.0/Middlewares/Third_Party/FreeRTOS/Source/include/event_groups.h \
  /Users/Alberic/Desktop/EPFL/team_rocket/SW/Eiger/library/STM32Cube_FW_F4_V1.23.0/Middlewares/Third_Party/FreeRTOS/Source/include/timers.h \
- /Users/Alberic/Desktop/EPFL/team_rocket/SW/Eiger/library/host-board/Inc/airbrake/airbrake.h
+ /Users/Alberic/Desktop/EPFL/team_rocket/SW/Eiger/library/host-board/Inc/airbrake/airbrake.h \
+ /Users/Alberic/Desktop/EPFL/team_rocket/SW/Eiger/flight-sw/template/Inc/usart.h \
+ /Users/Alberic/Desktop/EPFL/team_rocket/SW/Eiger/flight-sw/template/Inc/main.h \
+ /Users/Alberic/Desktop/EPFL/team_rocket/SW/Eiger/library/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_adc.h \
+ /Users/Alberic/Desktop/EPFL/team_rocket/SW/Eiger/library/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_tim.h \
+ /Users/Alberic/Desktop/EPFL/team_rocket/SW/Eiger/library/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_bus.h \
+ /Users/Alberic/Desktop/EPFL/team_rocket/SW/Eiger/library/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_cortex.h \
+ /Users/Alberic/Desktop/EPFL/team_rocket/SW/Eiger/library/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_rcc.h \
+ /Users/Alberic/Desktop/EPFL/team_rocket/SW/Eiger/library/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_system.h \
+ /Users/Alberic/Desktop/EPFL/team_rocket/SW/Eiger/library/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_utils.h \
+ /Users/Alberic/Desktop/EPFL/team_rocket/SW/Eiger/library/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_pwr.h \
+ /Users/Alberic/Desktop/EPFL/team_rocket/SW/Eiger/library/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_gpio.h \
+ /Users/Alberic/Desktop/EPFL/team_rocket/SW/Eiger/library/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_dma.h \
+ /Users/Alberic/Desktop/EPFL/team_rocket/SW/Eiger/library/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_exti.h \
+ /Users/Alberic/Desktop/EPFL/team_rocket/SW/Eiger/library/host-board/Inc/CAN_communication.h \
+ /Users/Alberic/Desktop/EPFL/team_rocket/SW/Eiger/library/host-board/Inc/led.h \
+ /Users/Alberic/Desktop/EPFL/team_rocket/SW/Eiger/flight-sw/template/Inc/main.h
 
 /Users/Alberic/Desktop/EPFL/team_rocket/SW/Eiger/library/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
 
@@ -162,3 +178,35 @@ host-board/Src/airbrake/airbrakes.o: \
 /Users/Alberic/Desktop/EPFL/team_rocket/SW/Eiger/library/STM32Cube_FW_F4_V1.23.0/Middlewares/Third_Party/FreeRTOS/Source/include/timers.h:
 
 /Users/Alberic/Desktop/EPFL/team_rocket/SW/Eiger/library/host-board/Inc/airbrake/airbrake.h:
+
+/Users/Alberic/Desktop/EPFL/team_rocket/SW/Eiger/flight-sw/template/Inc/usart.h:
+
+/Users/Alberic/Desktop/EPFL/team_rocket/SW/Eiger/flight-sw/template/Inc/main.h:
+
+/Users/Alberic/Desktop/EPFL/team_rocket/SW/Eiger/library/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_adc.h:
+
+/Users/Alberic/Desktop/EPFL/team_rocket/SW/Eiger/library/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_tim.h:
+
+/Users/Alberic/Desktop/EPFL/team_rocket/SW/Eiger/library/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_bus.h:
+
+/Users/Alberic/Desktop/EPFL/team_rocket/SW/Eiger/library/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_cortex.h:
+
+/Users/Alberic/Desktop/EPFL/team_rocket/SW/Eiger/library/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_rcc.h:
+
+/Users/Alberic/Desktop/EPFL/team_rocket/SW/Eiger/library/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_system.h:
+
+/Users/Alberic/Desktop/EPFL/team_rocket/SW/Eiger/library/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_utils.h:
+
+/Users/Alberic/Desktop/EPFL/team_rocket/SW/Eiger/library/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_pwr.h:
+
+/Users/Alberic/Desktop/EPFL/team_rocket/SW/Eiger/library/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_gpio.h:
+
+/Users/Alberic/Desktop/EPFL/team_rocket/SW/Eiger/library/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_dma.h:
+
+/Users/Alberic/Desktop/EPFL/team_rocket/SW/Eiger/library/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_exti.h:
+
+/Users/Alberic/Desktop/EPFL/team_rocket/SW/Eiger/library/host-board/Inc/CAN_communication.h:
+
+/Users/Alberic/Desktop/EPFL/team_rocket/SW/Eiger/library/host-board/Inc/led.h:
+
+/Users/Alberic/Desktop/EPFL/team_rocket/SW/Eiger/flight-sw/template/Inc/main.h:

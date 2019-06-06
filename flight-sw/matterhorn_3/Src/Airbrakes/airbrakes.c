@@ -62,7 +62,9 @@ void TK_ab_controller (void const * argument)
 
       if (currentState == STATE_COAST)
         {
-          //command_aerobrake_controller (altitude_estimate, air_speed_state_estimate); // Should be full close
+          //
+
+    	  command_aerobrake_controller (altitude_estimate, air_speed_state_estimate); // Should be full close
 
           uint32_t elapsed_time = HAL_GetTick () - LIFTOFF_TIME;
 

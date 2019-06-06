@@ -31,6 +31,11 @@ Middlewares/FreeRTOS \
 Src \
 host-board/Src \
 host-board/Src/Misc \
+host-board/Src/Sensors/BME280 \
+host-board/Src/Sensors/BMP280 \
+host-board/Src/Sensors/BNO055 \
+host-board/Src/Sensors/GPS \
+host-board/Src/Sensors \
 host-board/Src/Telemetry \
 host-board/Src/airbrake \
 host-board/Src/sd_Logging \

@@ -36,7 +36,7 @@ enum states
 
 volatile uint32_t flight_status;
 volatile float32_t airbrakes_angle;
-extern volatile float32_t air_speed_state_estimate, altitude_estimate;
+extern volatile float air_speed_state_estimate, altitude_estimate;
 
 volatile uint8_t currentState;
 volatile uint32_t LIFTOFF_TIME;

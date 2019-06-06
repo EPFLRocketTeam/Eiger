@@ -135,14 +135,14 @@ void Error_Handler(void);
 	#define BOARD_LED_R (80)
 	#define BOARD_LED_G (50)
 	#define BOARD_LED_B (0)
-	#define CAN_ID CAN_ID_AIBRAKE_BOARD
+	#define CAN_ID CAN_ID_TELEMETRY_BOARD
 #endif
 
 #ifdef AIRBRAKE_BOARD
 	#define BOARD_LED_R (100)
 	#define BOARD_LED_G (0)
 	#define BOARD_LED_B (100)
-	#define CAN_ID CAN_ID_MAIN_BOARD
+	#define CAN_ID CAN_ID_AIBRAKE_BOARD
 #endif
 
 #ifdef DEBUG_BOARD

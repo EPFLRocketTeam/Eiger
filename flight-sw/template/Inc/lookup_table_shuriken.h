@@ -4,7 +4,7 @@
 #define TABLE_LENGTH 500
 #define TABLE_WIDTH 3 
 #define TABLE_DIFF_SPEEDS_SAME_ALTITUDE 5
-static const float32_t SimData[TABLE_LENGTH][TABLE_WIDTH] = {
+static const float SimData[TABLE_LENGTH][TABLE_WIDTH] = {
 { 802.3013, 236.4456, 0 },
 { 802.3013, 240.2778, 53.5 },
 { 802.3013, 245.8492, 107 },

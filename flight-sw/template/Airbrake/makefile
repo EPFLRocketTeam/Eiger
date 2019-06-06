@@ -12,6 +12,11 @@ RM := rm -rf
 -include host-board/Src/sd_Logging/subdir.mk
 -include host-board/Src/airbrake/subdir.mk
 -include host-board/Src/Telemetry/subdir.mk
+-include host-board/Src/Sensors/GPS/subdir.mk
+-include host-board/Src/Sensors/BNO055/subdir.mk
+-include host-board/Src/Sensors/BMP280/subdir.mk
+-include host-board/Src/Sensors/BME280/subdir.mk
+-include host-board/Src/Sensors/subdir.mk
 -include host-board/Src/Misc/subdir.mk
 -include host-board/Src/subdir.mk
 -include Src/subdir.mk
