@@ -110,10 +110,12 @@ class CanLog:
 
     def nextMsgTAfterT(self, time):
         # return msg T with t > time
+        # None if no new message
         sub_df = self.df.query('time > @time')
-        print(sub_df)
-
-        return sub_df.iloc[0]['time']
+        if sub_df.size == 0:
+            return None
+        else:
+            return sub_df.iloc[0]['time']
 
     def __str__(self):
         return self.df.__str__()
@@ -150,6 +152,7 @@ def _testCanLog():
     log.save('test2.txt')
 
     print('next t after 100 is:', log.nextMsgTAfterT(100))
+    print('next t after 5000 is:', log.nextMsgTAfterT(5000))
     print('msg between 500 and 1000 are:')
     m_list = log.getMsgInDelta(500,1000)
     for m in m_list: print(m)
