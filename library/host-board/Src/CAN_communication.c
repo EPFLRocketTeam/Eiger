@@ -130,11 +130,12 @@ uint32_t can_readFrame(void) {
 		can_current_msg.data += (uint32_t) RxData[3] << 0;
 
         can_current_msg.id = RxData[4];
-        //----------------------------------------------------------------------check if works
-        uint8_t* ptr = (uint8_t*) &can_current_msg.timestamp;
-        *ptr = 0;
-        memcpy(&ptr[1], &RxData[5], 3);
-        //----------------------------------------------------------------------check if works
+
+        can_current_msg.timestamp = 0;
+        can_current_msg.timestamp += (uint32_t) RxData[5] << 16;
+        can_current_msg.timestamp += (uint32_t) RxData[6] << 8;
+		can_current_msg.timestamp += (uint32_t) RxData[7] << 0;
+
         can_current_msg.id_CAN = RxHeader.StdId;
     }
     return fill_level;
