@@ -16,6 +16,15 @@ class Message(TPCANMsg):
         self.ID = can_id
         self.MSGTYPE = PCAN_MESSAGE_STANDARD
 
+    def fromTPCANMsg(msg):
+        self = Message()
+        self.LEN = msg.LEN
+        self.ID = msg.ID
+        self.MSGTYPE = msg.MSGTYPE
+        self.DATA = msg.DATA
+
+        self.unpackData(self.DATA)
+        return self
         
     def setData(self, data):
         self.data_field = data
@@ -58,7 +67,7 @@ class Message(TPCANMsg):
 
 
 def msgToDict(msg, time):
-    idx = CanLog.indexes
+    idx = CanLog.columns
     data = {idx[0]:time,
             idx[1]:msg.ID,
             idx[2]:msg.code_field,
@@ -67,7 +76,7 @@ def msgToDict(msg, time):
     return data
     
 def dictToMsg(row):
-    idx = CanLog.indexes
+    idx = CanLog.columns
     m = Message(row[idx[1]])
     m.setCode(row[idx[2]])
     m.setData(row[idx[3]])
@@ -75,18 +84,22 @@ def dictToMsg(row):
     return m
 
 class CanLog:
-    indexes = ['time', 'id', 'code', 'data', 'timestamp']
+    columns = ['time', 'id', 'code', 'data', 'timestamp']
 
     def __init__(self):
-        self.df = pd.DataFrame(index=CanLog.indexes)
+        self.df = pd.DataFrame(columns=CanLog.columns)
 
     def load(self, filepath):
         self.df = pd.read_csv(filepath)
         self.df = self.df.sort_values('time')
 
     def save(self, filepath):
-        self.df = self.df.sort_values('time')
-        self.df.to_csv(filepath, index=False)
+        if len(self.df.index) > 0:
+            print(self.df, len(self.df.index))
+            self.df = self.df.sort_values('time')
+            self.df.to_csv(filepath, index=False)
+        else:
+            print('Empty log. Nothing was saved to {}'.format(filepath))
 
     def addMsg(self, message, time):
         self.add(msgToDict(message, time))
@@ -119,6 +132,8 @@ class CanLog:
 
     def __str__(self):
         return self.df.__str__()
+
+
 
 def _testMessage():
     def check(m):
@@ -160,8 +175,8 @@ def _testCanLog():
     m_list = log.getMsgInDelta(1000,2000)
     for m in m_list: print(m)
 
-
-
 if __name__ == "__main__":
-    # _testMessage()
+    print('================ Test Message =================')
+    _testMessage()
+    print('================ Test CAN log =================')
     _testCanLog()

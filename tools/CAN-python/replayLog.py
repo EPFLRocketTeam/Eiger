@@ -6,7 +6,7 @@ import select                  ## Waiting for I/O completion
 import signal                  ## Set handlers for asynchronous events
 import sys                     ## System-specific parameters and functions
 
-import utils
+import CAN as utils
 
 def getTime():
     return time.perf_counter()*1000
