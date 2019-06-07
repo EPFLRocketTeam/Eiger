@@ -39,8 +39,8 @@ def init_pcan(channel, baudrate):
 
 
 def monitor(pcan, channel, logger):
-    result = pcan.GetValue(channel,PCAN_RECEIVE_EVENT)
-    if result[0] != PCAN_ERROR_OK:
+    result = pcan.GetValue(channel,PCANBasic.PCAN_RECEIVE_EVENT)
+    if result[0] != PCANBasic.PCAN_ERROR_OK:
         print("Monitor Init Error!", pcan.GetErrorText(result))
         sys.exit(1)
 
@@ -48,8 +48,8 @@ def monitor(pcan, channel, logger):
 
     while 1:
         result = pcan.Read(channel)
-        if result[0] == PCAN_ERROR_OK:
-            msg=Message.fromTPCANMsg(result[1])
+        if result[0] == PCANBasic.PCAN_ERROR_OK:
+            msg=CAN.Message.fromTPCANMsg(result[1])
             time = getTime()
             logger.addMsg(msg, time)
 
@@ -61,7 +61,7 @@ def monitor(pcan, channel, logger):
             buf = buf + "]"
             print (buf)
 
-        elif result[0] == PCAN_ERROR_QRCVEMPTY:
+        elif result[0] == PCANBasic.PCAN_ERROR_QRCVEMPTY:
             select.select([fd],[],[]) # blocking call until frame ready
 
 
@@ -80,7 +80,7 @@ def replayLog(pcan, channel, log_file):
         for m in msgs: 
             rst = pcan.Write(channel, m)
             print(t_now, m)
-            if rst != PCAN_ERROR_OK: print("Transmit Error!", pcan.GetErrorText(rst))
+            if rst != PCANBasic.PCAN_ERROR_OK: print("Transmit Error!", pcan.GetErrorText(rst))
 
         next_t = log.nextMsgTAfterT(t_now)
 
@@ -89,15 +89,15 @@ def replayLog(pcan, channel, log_file):
         else:
             t_previous = t_now
             sleep_delta = next_t-t_now
-            time.sleep(sleep_delta/1000)
+            time.sleep(sleep_delta)
             t_now = getTime()-t0
 
 
 def main():
     channel  = PCANBasic.PCAN_USBBUS1
     baudrate = PCANBasic.PCAN_BAUD_250K
-    # pcan = init_pcan(channel, baudrate)
-    pcan= None
+    pcan = init_pcan(channel, baudrate)
+    # pcan= None
     
     log_file = INPUT_FILE
 

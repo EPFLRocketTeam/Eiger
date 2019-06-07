@@ -9,7 +9,7 @@ import sys                     ## System-specific parameters and functions
 import CAN as utils
 
 def getTime():
-    return time.perf_counter()*1000
+    return time.perf_counter()
 
 def sigterm(signo, frame):
     ''' Graceful exit on ^C
@@ -52,7 +52,7 @@ def PCBUSB_Send(log_file):
         else:
             t_previous = t_now
             sleep_delta = next_t-t_now
-            time.sleep(sleep_delta/1000)
+            time.sleep(sleep_delta)
             t_now = getTime()-t0
 
 PCBUSB_Send('test.txt')

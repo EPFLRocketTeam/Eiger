@@ -77,10 +77,10 @@ def msgToDict(msg, time):
     
 def dictToMsg(row):
     idx = CanLog.columns
-    m = Message(row[idx[1]])
-    m.setCode(row[idx[2]])
-    m.setData(row[idx[3]])
-    m.setTimestamp(row[idx[4]])
+    m = Message(int(row[idx[1]]))
+    m.setCode(int(row[idx[2]]))
+    m.setData(int(row[idx[3]]))
+    m.setTimestamp(int(row[idx[4]]))
     return m
 
 class CanLog:
