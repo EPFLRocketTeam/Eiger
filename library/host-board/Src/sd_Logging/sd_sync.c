@@ -30,6 +30,8 @@ osStatus initSdFile ()
 {
   MX_FATFS_Init ();
   led_sdcard_id = led_register_TK();
+  led_set_TK_rgb(led_sdcard_id, 0, 50, 50);
+
 
   if (disk_initialize (0) != 0)
     {
