@@ -105,7 +105,7 @@ def replayLog(state):
 # Thread to redraw the UI every so often
 def console_drawer(state):
     while(True):
-        time.sleep(0.1)
+        time.sleep(0.2)
         redraw(state)
 
 # Display the ncurse UI with the latest info received

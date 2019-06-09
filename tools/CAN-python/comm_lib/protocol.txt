@@ -16,8 +16,8 @@ DATA_ID_GYRO_X, 4, mrps
 DATA_ID_GYRO_Y, 5, mrps
 DATA_ID_GYRO_Z, 6, mrps
 DATA_ID_GPS_HDOP,      7, mm
-DATA_ID_GPS_LAT,       8, mdeg
-DATA_ID_GPS_LONG,      9, mdeg
+DATA_ID_GPS_LAT,       8, udeg
+DATA_ID_GPS_LONG,      9, udeg
 DATA_ID_GPS_ALTITUDE, 10, m
 DATA_ID_GPS_SATS,     11
 
