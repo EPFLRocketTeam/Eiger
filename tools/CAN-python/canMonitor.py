@@ -1,4 +1,4 @@
-from PCANBasic import *        ## PCAN-Basic library import
+from comm_lib.PCANBasic import *        ## PCAN-Basic library import
 
 import string                  ## String functions
 import time                    ## Time-related library

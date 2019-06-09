@@ -1,4 +1,4 @@
-from PCANBasic import *        ## PCAN-Basic library import
+from comm_lib.PCANBasic import *        ## PCAN-Basic library import
 
 import string                  ## String functions
 import time                    ## Time-related library
@@ -6,7 +6,7 @@ import select                  ## Waiting for I/O completion
 import signal                  ## Set handlers for asynchronous events
 import sys                     ## System-specific parameters and functions
 
-import CAN as utils
+import comm_lib.CAN as utils
 
 def getTime():
     return time.perf_counter()

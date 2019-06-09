@@ -1,4 +1,7 @@
-from PCANBasic import *        ## PCAN-Basic library import
+if __name__ == "__main__":
+    from PCANBasic import *        ## PCAN-Basic library import
+else:
+    from comm_lib.PCANBasic import *        ## PCAN-Basic library import
 
 import struct
 import ctypes

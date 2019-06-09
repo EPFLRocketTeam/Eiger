@@ -1,6 +1,6 @@
 # import atexit
 # import curses
-import PCANBasic  ## PCAN-Basic library import
+import comm_lib.PCANBasic as PCANBasic ## PCAN-Basic library import
 import sys
 import threading
 import time
@@ -8,7 +8,7 @@ import signal
 import time       ## Time-related library
 import select     ## Waiting for I/O completion
 
-import CAN
+import comm_lib.CAN as CAN
 
 
 OUTPUT_FILE = 'log_rx.txt'
