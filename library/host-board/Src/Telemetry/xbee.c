@@ -175,7 +175,9 @@ void sendXbeeFrame ()
 
 void HAL_UART_TxCpltCallback (UART_HandleTypeDef *huart)
 {
-  osSemaphoreRelease (xBeeTxBufferSemHandle);
+	if (huart == xBee_huart) {
+		osSemaphoreRelease (xBeeTxBufferSemHandle);
+	}
 }
 
 void initXbee ()

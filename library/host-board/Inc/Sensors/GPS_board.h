@@ -10,7 +10,16 @@
 
 #include "main.h"
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 void gps_init(UART_HandleTypeDef *gpsHuart);
 void TK_GPS_board(void const * argument);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* SENSORS_GPS_BOARD_H_ */

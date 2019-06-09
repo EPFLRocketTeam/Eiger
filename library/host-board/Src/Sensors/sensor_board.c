@@ -11,7 +11,7 @@
 #include <inttypes.h>
 #include <math.h>
 
-#define I2C_TIMEOUT 10
+#define I2C_TIMEOUT 3
 
 int8_t init_bme();
 int8_t init_bno();
