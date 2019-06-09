@@ -27,7 +27,7 @@ void gps_init(UART_HandleTypeDef *gpsHuart) {
 void send_gps_data() {
 	uint8_t sats   = gpsParser.satellites.isValid () ? static_cast<uint8_t> (gpsParser.satellites.value ()) : 0;
 
-	if (gpsParser.altitude.isValid ()) {
+	if (gpsParser.location.isValid ()) {
 		float hdop = gpsParser.hdop.isValid () ? gpsParser.hdop.hdop () : 0xffffffff;
 		float lat  = gpsParser.location.isValid () ? gpsParser.location.lat () : 0xffffffff;
 		float lon  = gpsParser.location.isValid () ? gpsParser.location.lng () : 0xffffffff;
@@ -47,10 +47,10 @@ void send_gps_data() {
 
 void TK_GPS_board(void const * argument)
 {
+	  uint32_t measurement_time = HAL_GetTick ();
+	  led_set_TK_rgb(led_gps_id, 50, 0, 150);
 	  HAL_UART_Receive_DMA (gps_huart, gpsRxBuffer, GPS_RX_BUFFER_SIZE);
 
-	  uint32_t gpsSequenceNumber;
-	  uint32_t measurement_time = HAL_GetTick ();
 
 	  for (;;)
 	    {
