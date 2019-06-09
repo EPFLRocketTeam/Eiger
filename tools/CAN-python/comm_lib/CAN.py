@@ -42,6 +42,8 @@ class Message(TPCANMsg):
         self._update_DATA()
 
     def _update_DATA(self):
+        if self.LEN != 8:
+            return
         packed = struct.pack(CAN_PACK_FORMAT, self.data_field,
                                               self.code_field,
                                               self.timestamp_field)
@@ -64,9 +66,13 @@ class Message(TPCANMsg):
 
     def __str__(self):
         self._update_DATA()
-        return "ID:{}, DATA:{}, CODE:{}, TIME:{}, HEX:{}".format(
+        hex_code = ""
+        for i in range(0,self.LEN):
+            hex_code = hex_code + "{:02X} ".format(self.DATA[i])
+
+        return "ID:{:3}, DATA:{:8}, CODE:{:2}, TIME:{:8}, HEX:[{}]".format(
             self.ID, self.data_field, self.code_field,
-            self.timestamp_field, [hex(b) for b in self.DATA])
+            self.timestamp_field, hex_code[:-1])
 
 
 def msgToDict(msg, time):

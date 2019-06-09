@@ -1,10 +1,12 @@
 from comm_lib.PCANBasic import *        ## PCAN-Basic library import
+import comm_lib.CAN as CAN
 
 import string                  ## String functions
 import time                    ## Time-related library
 import select                  ## Waiting for I/O completion
 import signal                  ## Set handlers for asynchronous events
 import sys                     ## System-specific parameters and functions
+
 
 t0 = None
 
@@ -45,14 +47,19 @@ def PCBUSB_Recv():
     while 1:
         result = pcan.Read(channel)
         if result[0] == PCAN_ERROR_OK:
-            CANmsg=result[1]
+            CANmsg = result[1]
+            msg=CAN.Message.fromTPCANMsg(CANmsg)
+            time = getTime()
+
+            print ("{:8.3f} {}".format(time, msg))
+
             buf = ""
-            buf = buf + "{:15.3f} ".format(getTime())
+            buf = buf + "{:8.3f} ".format(time)
             buf = buf + "ID {:03X} len={} [ ".format(CANmsg.ID, CANmsg.LEN)
             for i in range(0,CANmsg.LEN):
                 buf = buf + "{:02X} ".format(CANmsg.DATA[i])
             buf = buf + "]"
-            print (buf)
+            # print (buf)
         elif result[0] == PCAN_ERROR_QRCVEMPTY:
             if fd != -1:
                 select.select([fd],[],[]) # blocking call

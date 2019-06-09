@@ -1,0 +1,30 @@
+// note for maintaining this file:
+// before each set of values and keys, put "// name of category"
+// example: "// Logging Headers"
+// value are "NAME, VAL, UNIT"
+// example: "ID_TIME, 1, ms"
+// Note that UNIT is optional and VAL can be an expression (only a sum of numbers)
+// this format is required by cso_lib.py
+
+
+// Data ID
+DATA_ID_PRESSURE, 0, Pa
+DATA_ID_ACCELERATION_X, 1, mili-g
+DATA_ID_ACCELERATION_Y, 2, mili-g
+DATA_ID_ACCELERATION_Z, 3, mili-g
+DATA_ID_GYRO_X, 4, mrps
+DATA_ID_GYRO_Y, 5, mrps
+DATA_ID_GYRO_Z, 6, mrps
+DATA_ID_GPS_HDOP,      7, mm
+DATA_ID_GPS_LAT,       8, mdeg
+DATA_ID_GPS_LONG,      9, mdeg
+DATA_ID_GPS_ALTITUDE, 10, m
+DATA_ID_GPS_SATS,     11
+
+// Board CAN ID
+CAN_ID_MAIN_BOARD, 0
+CAN_ID_BLACK_BOX_BOARD, 1
+CAN_ID_TELEMETRY_BOARD, 2
+CAN_ID_AIBRAKE_BOARD, 3
+CAN_ID_DEBUG_BOARD, 9
+CAN_ID_DEFAULT, 10
