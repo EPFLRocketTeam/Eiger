@@ -47,6 +47,10 @@ extern volatile CAN_msg can_current_msg;
 
 void CAN_Config(uint32_t id);
 void can_setFrame(uint32_t data, uint8_t data_id, uint32_t timestamp);
-uint32_t can_readFrame(void);
+
+uint32_t can_msgPending();
+CAN_msg can_readBuffer();
+
+uint32_t can_readFrame(void); // deprecated! use can_readBuffer with can_msgPending instead
 
 #endif /* CAN_COMMUNICATION_H_ */

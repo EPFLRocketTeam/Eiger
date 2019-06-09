@@ -10,6 +10,10 @@
  */
 
 #include "CAN_communication.h"
+#include "main.h"
+#include "led.h"
+
+#define CAN_BUFFER_DEPTH 32
 
 extern CAN_HandleTypeDef hcan1;
 
@@ -19,6 +23,24 @@ uint8_t               RxData[8];
 uint32_t              TxMailbox;
 
 volatile CAN_msg can_current_msg;
+
+CAN_msg can_buffer[CAN_BUFFER_DEPTH];
+uint8_t can_buffer_pointer_rx = 0;
+uint8_t can_buffer_pointer_tx = 0;
+
+int can_id_led = -1;
+
+
+uint32_t pointer_inc(uint32_t val, uint32_t size){
+	val++;
+
+	while(val >= size) {
+		val-=size;
+	}
+
+	return val;
+}
+
 /*
  * Configures CAN protocol for 250kbit/s without interrupt for reading (only polling).
  */
@@ -55,11 +77,11 @@ void CAN_Config(uint32_t id)
     }
     
     /*##-4- Activate CAN RX notification #######################################*/
-    //  if (HAL_CAN_ActivateNotification(&hcan1, CAN_IT_RX_FIFO0_MSG_PENDING) != HAL_OK)
-    //  {
-    //    /* Notification Error */
-    //      _Error_Handler(__FILE__, __LINE__);
-    //  }
+    if (HAL_CAN_ActivateNotification(&hcan1, CAN_IT_RX_FIFO0_MSG_PENDING) != HAL_OK)
+    {
+        /* Notification Error */
+    	//_Error_Handler(__FILE__, __LINE__);
+    }
     
     /*##-5- Configure Transmission process #####################################*/
     TxHeader.StdId = id;
@@ -68,6 +90,11 @@ void CAN_Config(uint32_t id)
     TxHeader.IDE = CAN_ID_STD;
     TxHeader.DLC = 8;
     TxHeader.TransmitGlobalTime = DISABLE;
+
+	#ifdef CAN_LED
+    can_id_led = led_register_TK(); // register a LED for the CAN bus
+	#endif
+    led_set_TK_rgb(can_id_led, 0, 10, 0);
 }
 
 /*
@@ -94,6 +121,43 @@ void can_setFrame(uint32_t data, uint8_t data_id, uint32_t timestamp) {
     }
     else {
     }
+}
+
+void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
+	can_readFrame();
+	can_buffer[can_buffer_pointer_tx] = can_current_msg;
+	pointer_inc(can_buffer_pointer_tx, CAN_BUFFER_DEPTH);
+
+	if (can_msgPending() == 0) { // indicates overflow
+		pointer_inc(can_buffer_pointer_rx, CAN_BUFFER_DEPTH); // skip one msg in the rx buffer
+		led_set_TK_rgb(can_id_led, 50, 0 , 50); // signal on the LED something went wrong
+	}
+}
+
+uint32_t can_msgPending() {
+	int32_t diff = can_buffer_pointer_tx - can_buffer_pointer_rx;
+	if (diff < 0) {
+		diff += CAN_BUFFER_DEPTH;
+	}
+
+	if (diff == 0) {
+		// signal on the LED all is well
+	}
+
+	return diff;
+}
+
+CAN_msg can_readBuffer() {
+	CAN_msg ret = {0};
+
+	if (can_msgPending() > 0) {
+		ret = can_buffer[can_buffer_pointer_rx];
+		can_buffer_pointer_rx = pointer_inc(can_buffer_pointer_rx, CAN_BUFFER_DEPTH);
+	} else { // no message actually pending
+		// do nothing, will return the {0} CAN_msg
+	}
+
+	return ret;
 }
 
 /*
