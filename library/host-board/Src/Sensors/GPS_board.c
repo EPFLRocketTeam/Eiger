@@ -95,7 +95,7 @@ void TK_GPS_board(void const * argument)
 			}
 			else
 			{
-				can_setFrame((int32_t)sats+2, DATA_ID_GPS_SATS, HAL_GetTick());
+				can_setFrame((int32_t)sats, DATA_ID_GPS_SATS, HAL_GetTick());
 				led_set_TK_rgb(led_gps_id, 0, 0, 150);
 			}
 			}
