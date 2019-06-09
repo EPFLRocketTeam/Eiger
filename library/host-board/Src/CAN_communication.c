@@ -15,7 +15,6 @@ extern CAN_HandleTypeDef hcan1;
 
 CAN_TxHeaderTypeDef   TxHeader;
 CAN_RxHeaderTypeDef   RxHeader;
-uint8_t               TxData[8];
 uint8_t               RxData[8];
 uint32_t              TxMailbox;
 
@@ -28,23 +27,8 @@ void CAN_Config(uint32_t id)
     CAN_FilterTypeDef  sFilterConfig;
     
     /*##-1- Configure the CAN peripheral #######################################*/
-    hcan1.Instance = CAN1;
-    hcan1.Init.Prescaler = 9;
-    hcan1.Init.Mode = CAN_MODE_NORMAL;
-    hcan1.Init.SyncJumpWidth = CAN_SJW_1TQ;
-    hcan1.Init.TimeSeg1 = CAN_BS1_13TQ;
-    hcan1.Init.TimeSeg2 = CAN_BS2_2TQ;
-    hcan1.Init.TimeTriggeredMode = DISABLE;
-    hcan1.Init.AutoBusOff = DISABLE;
-    hcan1.Init.AutoWakeUp = DISABLE;
-    hcan1.Init.AutoRetransmission = ENABLE;
-    hcan1.Init.ReceiveFifoLocked = DISABLE;
-    hcan1.Init.TransmitFifoPriority = DISABLE;
-    if (HAL_CAN_Init(&hcan1) != HAL_OK)
-    {
-        //    _Error_Handler(__FILE__, __LINE__);
-    }
-    
+    // Done in MX_CAN1_Init()
+
     /*##-2- Configure the CAN Filter ###########################################*/
     sFilterConfig.FilterBank = 0;
     sFilterConfig.FilterMode = CAN_FILTERMODE_IDMASK;
@@ -93,7 +77,8 @@ void CAN_Config(uint32_t id)
  * byte 5..7 --> timestamp
  */
 void can_setFrame(uint32_t data, uint8_t data_id, uint32_t timestamp) {
-    TxData[0] = (uint8_t) (data >> 24);
+	uint8_t TxData[8] = {0};
+	TxData[0] = (uint8_t) (data >> 24);
     TxData[1] = (uint8_t) (data >> 16);
     TxData[2] = (uint8_t) (data >> 8);
     TxData[3] = (uint8_t) (data >> 0);
@@ -102,6 +87,8 @@ void can_setFrame(uint32_t data, uint8_t data_id, uint32_t timestamp) {
     TxData[6] = (uint8_t) (timestamp >> 8);
     TxData[7] = (uint8_t) (timestamp >> 0);
     
+	while (HAL_CAN_IsTxMessagePending(&hcan1, TxMailbox)) {} // wait for CAN to be ready
+
     if (HAL_CAN_AddTxMessage(&hcan1, &TxHeader, TxData, &TxMailbox) != HAL_OK) {
         // deal with it (never fails)
     }
