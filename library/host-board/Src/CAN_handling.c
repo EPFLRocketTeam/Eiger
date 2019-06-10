@@ -52,6 +52,17 @@ bool handleBaroData(BARO_data data) {
 	return false;
 }
 
+float can_getAltitude() {
+	return 0;
+}
+
+float can_getSpeed() {
+	return 0;
+}
+
+uint8_t can_getState() {
+	return 0;
+}
 
 void sendSDcard(CAN_msg msg) {
    static char buffer[BUFFER_SIZE] = {0};

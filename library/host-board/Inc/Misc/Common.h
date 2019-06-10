@@ -26,12 +26,12 @@
 extern TIM_HandleTypeDef htim7;
 
 /*
- * States decleration
+ * States declaration
  */
 
 enum states
 {
-  STATE_CALIBRATION, STATE_IDLE, STATE_LIFTOFF, STATE_COAST, STATE_PRIMARY, STATE_SECONDARY, STATE_TOUCHDOWN
+  STATE_CALIBRATION=0, STATE_IDLE, STATE_LIFTOFF, STATE_COAST, STATE_PRIMARY, STATE_SECONDARY, STATE_TOUCHDOWN
 };
 
 volatile uint32_t flight_status;

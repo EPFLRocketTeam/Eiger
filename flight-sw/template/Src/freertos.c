@@ -67,6 +67,7 @@
 #include "Sensors/sensor_board.h"
 #include "Sensors/GPS_board.h"
 #include "ekf/tiny_ekf.h"
+#include "CAN_handling.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/

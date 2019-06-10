@@ -42,8 +42,8 @@ double rad2deg(double deg) {
 float IMUb[6];
 float zdata[4];
 
-volatile bool IMU_avail = 0;
-volatile bool GPS_avail = 0;
+volatile bool IMU_avail = false;
+volatile bool GPS_avail = false;
 
 bool GPS_init = false;
 float lat_init = 0;
@@ -60,7 +60,7 @@ bool kalman_handleGPSData(GPS_data gps) {
 	zdata[1] = 0 * rad2deg(gps.lon-lon_init) * earth_radius / cos(rad2deg(lat_init)); // y gps
 	zdata[2] = gps.altitude; // z gps
 	zdata[3] = zdata[2]; // z baro...
-	GPS_avail = 1;
+	GPS_avail = true;
 	return true;
 }
 
@@ -135,6 +135,8 @@ void TK_kalman() {
 
 	uint32_t start_time = 0;
 	uint32_t now = 0;
+	uint32_t iter = 0;
+
 
 
 	int j, k;
@@ -207,8 +209,8 @@ void TK_kalman() {
 			ekf.hx[2] = ekf.fx[2];
 			ekf.hx[3] = ekf.fx[2];
 
-			if (GPS_avail) { // go for the kalman
-				GPS_avail = 0;
+			if (GPS_init && (iter%5) == 0) { // go for the kalman
+				GPS_avail = false;
 				//fill H
 				ekf.H[0][0] = 1;
 				ekf.H[1][1] = 1;
@@ -217,6 +219,8 @@ void TK_kalman() {
 				ekf.x[6] = 0; // force orientation pointing up
 				ekf.x[7] = 0;
 				ekf.x[8] = 0;
+				can_setFrame((int32_t) (1000 * zdata[0]), 51, HAL_GetTick());
+				can_setFrame((int32_t) (1000 * zdata[1]), 52, HAL_GetTick());
 			} else { //simple INS
 				//fill H
 				ekf.H[0][0] = 0;
@@ -226,6 +230,7 @@ void TK_kalman() {
 			}
 
 			ekf_step(&ekf, zdata);
+			iter++;
 
 
 			//send estimate to the CAN
@@ -238,8 +243,7 @@ void TK_kalman() {
 			can_setFrame((int32_t) (180 / 3.14 * ekf.x[6]), DATA_ID_KALMAN_ROLL, HAL_GetTick());
 			can_setFrame((int32_t) (180 / 3.14 * ekf.x[7]), DATA_ID_KALMAN_PITCH, HAL_GetTick());
 			can_setFrame((int32_t) (180 / 3.14 * ekf.x[8]), DATA_ID_KALMAN_YAW, HAL_GetTick());
-			can_setFrame((int32_t) (1000 * zdata[0]), 51, HAL_GetTick());
-			can_setFrame((int32_t) (1000 * zdata[1]), 52, HAL_GetTick());
+
 		}
 		else {
 			// no IMU data available :sadface:
