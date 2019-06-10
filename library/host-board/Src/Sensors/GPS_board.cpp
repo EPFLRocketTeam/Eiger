@@ -42,7 +42,6 @@ void send_gps_data() {
 		led_set_TK_rgb(led_gps_id, 0, 0, 150);
 	}
 	can_setFrame((int32_t)sats, DATA_ID_GPS_SATS, HAL_GetTick());
-
 }
 
 void TK_GPS_board(void const * argument)
@@ -60,7 +59,8 @@ void TK_GPS_board(void const * argument)
 	          gpsParser.encode (gpsRxBuffer[lastGpsDmaStreamIndex++]);
 	        }
 
-	      if ((HAL_GetTick () - measurement_time) > 100)
+	      if (((HAL_GetTick () - measurement_time) > 100) && // every 100 ms
+	    		  gpsParser.passedChecksum() > 1) // if a valid packet has been received
 	        {
 	    	  send_gps_data();
 	          measurement_time = HAL_GetTick ();
