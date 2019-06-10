@@ -59,7 +59,7 @@ void TK_GPS_board(void const * argument)
 	          gpsParser.encode (gpsRxBuffer[lastGpsDmaStreamIndex++]);
 	        }
 
-	      if (((HAL_GetTick () - measurement_time) > 100) && // every 100 ms
+	      if (((HAL_GetTick () - measurement_time) > 100) && // periodically
 	    		  gpsParser.passedChecksum() > 1) // if a valid packet has been received
 	        {
 	    	  send_gps_data();

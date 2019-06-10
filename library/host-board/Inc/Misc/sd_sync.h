@@ -21,8 +21,7 @@ void TK_sd_sync (const void* args);
 
 osStatus initSdFile ();
 
-extern volatile bool new_sd_data_ready;
-extern volatile char sd_buffer[];
+int sd_write(char str[], int size);
 
 #ifdef __cplusplus
 }
