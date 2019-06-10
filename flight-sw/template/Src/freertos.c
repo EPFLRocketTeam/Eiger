@@ -92,7 +92,7 @@ osThreadId sensorBoardHandle;
 osThreadId task_LEDHandle;
 osThreadId task_GPSHandle;
 osThreadId xBeeTelemetryHandle;
-osThreadId telemetry_mgmtHandle;
+osThreadId canReaderHandle;
 osThreadId kalmanHandle;
 
 
@@ -149,8 +149,13 @@ void MX_FREERTOS_Init(void) {
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
+  // LED thread
   osThreadDef(task_LED, TK_led_handler, osPriorityNormal, 0, 256);
   task_LEDHandle = osThreadCreate(osThread(task_LED), NULL);
+
+  // CAN reader thread
+  osThreadDef(can_reader, TK_can_reader, osPriorityNormal, 0, 1024);
+  canReaderHandle = osThreadCreate(osThread(can_reader), NULL);
 
 #ifdef GPS
   osThreadDef(task_GPSHandle, TK_GPS_board, osPriorityNormal, 0, 256);
@@ -178,9 +183,6 @@ void MX_FREERTOS_Init(void) {
   xbee_freertos_init(&huart1);
   osThreadDef(xBeeTelemetry, TK_xBeeTelemetry, osPriorityNormal, 0, 128);
   xBeeTelemetryHandle = osThreadCreate(osThread(xBeeTelemetry), NULL);
-
-  osThreadDef(telemetry_mgmt, TK_telemetry_data, osPriorityNormal, 0, 1024);
-  telemetry_mgmtHandle = osThreadCreate(osThread(telemetry_mgmt), NULL);
 #endif
 
 #ifdef KALMAN
