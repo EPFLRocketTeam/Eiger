@@ -66,6 +66,7 @@
 #include "airbrake/airbrake.h"
 #include "Sensors/sensor_board.h"
 #include "Sensors/GPS_board.h"
+#include "ekf/tiny_ekf.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -92,6 +93,7 @@ osThreadId task_LEDHandle;
 osThreadId task_GPSHandle;
 osThreadId xBeeTelemetryHandle;
 osThreadId telemetry_mgmtHandle;
+osThreadId kalmanHandle;
 
 
 /* USER CODE END Variables */
@@ -179,6 +181,11 @@ void MX_FREERTOS_Init(void) {
 
   osThreadDef(telemetry_mgmt, TK_telemetry_data, osPriorityNormal, 0, 1024);
   telemetry_mgmtHandle = osThreadCreate(osThread(telemetry_mgmt), NULL);
+#endif
+
+#ifdef KALMAN
+  osThreadDef(kalman, TK_kalman, osPriorityNormal, 0, 1024);
+  kalmanHandle = osThreadCreate(osThread(kalman), NULL);
 #endif
 
   /* USER CODE END RTOS_THREADS */

@@ -155,7 +155,7 @@ void Error_Handler(void);
 // define board config
 #ifdef MAIN_BOARD
 	#define GPS
-	// Kalman
+	#define KALMAN
 #endif
 
 #ifdef BLACK_BOX_BOARD
