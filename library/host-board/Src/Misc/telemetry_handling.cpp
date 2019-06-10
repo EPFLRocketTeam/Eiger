@@ -23,12 +23,11 @@ extern "C" {
 }
 
 #define TELE_TIMEMIN 100
+#define GPS_TIMEMIN 500
 #define BUFFER_SIZE 128
 
 extern osMessageQId xBeeQueueHandle;
 char buffer[BUFFER_SIZE] = {0};
-
-
 
 
 Telemetry_Message createTelemetryDatagram (IMU_data* imu_data, BARO_data* baro_data, uint32_t measurement_time, uint32_t telemetrySeqNumber)
@@ -92,9 +91,10 @@ void TK_telemetry_data (void const * args)
   // init
   IMU_data  imu  = {{0,0,0},{0,0,0}, 0};
   BARO_data baro = {0,0,0};
-  GPS_data gpsData = {0};
+  GPS_data gpsData = {0, 0, 0, 0, 0};
   uint32_t meas_time = HAL_GetTick();
   uint32_t tele_time = HAL_GetTick();
+  uint32_t gps_time = HAL_GetTick();
   CAN_msg msg;
 
   bool new_baro = 0;
@@ -157,7 +157,7 @@ void TK_telemetry_data (void const * args)
 	    }
 	  }
 
-	  if (new_gps) {
+	  if (new_gps && (HAL_GetTick() - gps_time > GPS_TIMEMIN)) {
 		Telemetry_Message m = createGPSDatagram (telemetrySeqNumber++, gpsData);
 		osMessagePut (xBeeQueueHandle, (uint32_t) &m, 100);
 		// reset all the data
@@ -166,6 +166,7 @@ void TK_telemetry_data (void const * args)
 		gpsData.lon      = 0xffffffff;
 		gpsData.altitude = 0;
 		gpsData.sats     = 0;
+		gps_time = HAL_GetTick();
 		new_gps = 0;
 	  }
 
