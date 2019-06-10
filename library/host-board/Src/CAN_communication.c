@@ -113,13 +113,13 @@ void can_setFrame(uint32_t data, uint8_t data_id, uint32_t timestamp) {
     TxData[5] = (uint8_t) (timestamp >> 16);
     TxData[6] = (uint8_t) (timestamp >> 8);
     TxData[7] = (uint8_t) (timestamp >> 0);
-    
+
 	while (HAL_CAN_IsTxMessagePending(&hcan1, TxMailbox)) {} // wait for CAN to be ready
 
     if (HAL_CAN_AddTxMessage(&hcan1, &TxHeader, TxData, &TxMailbox) != HAL_OK) {
-        // deal with it (never fails)
-    }
-    else {
+
+    } else { // something bad happen
+    	// not sure what to do
     }
 }
 
