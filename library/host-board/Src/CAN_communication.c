@@ -13,7 +13,7 @@
 #include "main.h"
 #include "led.h"
 
-#define CAN_BUFFER_DEPTH 32
+#define CAN_BUFFER_DEPTH 64
 
 extern CAN_HandleTypeDef hcan1;
 
@@ -25,11 +25,12 @@ uint32_t              TxMailbox;
 volatile CAN_msg can_current_msg;
 
 CAN_msg can_buffer[CAN_BUFFER_DEPTH];
-uint8_t can_buffer_pointer_rx = 0;
-uint8_t can_buffer_pointer_tx = 0;
+volatile int32_t can_buffer_pointer_rx = 0;
+volatile int32_t can_buffer_pointer_tx = 0;
 
 int can_id_led = -1;
 
+uint32_t can_readFrame(void);
 
 uint32_t pointer_inc(uint32_t val, uint32_t size){
 	val++;
@@ -126,10 +127,10 @@ void can_setFrame(uint32_t data, uint8_t data_id, uint32_t timestamp) {
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
 	can_readFrame();
 	can_buffer[can_buffer_pointer_tx] = can_current_msg;
-	pointer_inc(can_buffer_pointer_tx, CAN_BUFFER_DEPTH);
+	can_buffer_pointer_tx = pointer_inc(can_buffer_pointer_tx, CAN_BUFFER_DEPTH);
 
-	if (can_msgPending() == 0) { // indicates overflow
-		pointer_inc(can_buffer_pointer_rx, CAN_BUFFER_DEPTH); // skip one msg in the rx buffer
+	if (can_buffer_pointer_tx == can_buffer_pointer_rx) { // indicates overflow
+		can_buffer_pointer_rx = pointer_inc(can_buffer_pointer_rx, CAN_BUFFER_DEPTH); // skip one msg in the rx buffer
 		led_set_TK_rgb(can_id_led, 50, 0 , 50); // signal on the LED something went wrong
 	}
 }
@@ -140,8 +141,8 @@ uint32_t can_msgPending() {
 		diff += CAN_BUFFER_DEPTH;
 	}
 
-	if (diff == 0) {
-		// signal on the LED all is well
+	if (diff == 0) { // signal on the LED all is well
+		led_set_TK_rgb(can_id_led, 0, 10, 0);
 	}
 
 	return diff;
@@ -156,6 +157,7 @@ CAN_msg can_readBuffer() {
 	} else { // no message actually pending
 		// do nothing, will return the {0} CAN_msg
 	}
+
 
 	return ret;
 }
