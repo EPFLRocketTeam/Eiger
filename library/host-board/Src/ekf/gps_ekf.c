@@ -18,9 +18,9 @@
  * MIT License
  */
 
-#include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <strings.h>
 #include <math.h>
 
@@ -28,24 +28,57 @@
 #include "ekf/tiny_ekf.h"
 #include "cmsis_os.h"
 #include "CAN_communication.h"
+#include "Misc/datastructs.h"
+
+
+#define EKF_PERIOD_MS (100) // [ms] step period
+
+#define earth_radius (6378e3)
+
+double rad2deg(double deg) {
+	return deg*3.14/180;
+}
 
 float IMUb[6];
 float zdata[4];
 
-extern volatile int IMU_avail;
+volatile bool IMU_avail = 0;
+volatile bool GPS_avail = 0;
 
-// positioning interval
-//static const float T = 1;
+bool GPS_init = false;
+float lat_init = 0;
+float lon_init = 0;
 
-/*static void blkfill(ekf_t * ekf, const float * a, int off)
- {
- off *= 2;
+bool kalman_handleGPSData(GPS_data gps) {
+	if (!GPS_init) {
+		lat_init = gps.lat;
+		lon_init = gps.lon;
+		GPS_init = true;
+	}
 
- ekf->Q[off]   [off]   = a[0];
- ekf->Q[off]   [off+1] = a[1];
- ekf->Q[off+1] [off]   = a[2];
- ekf->Q[off+1] [off+1] = a[3];
- }*/
+	zdata[0] = 0 * rad2deg(gps.lat-lat_init) * earth_radius; // x gps
+	zdata[1] = 0 * rad2deg(gps.lon-lon_init) * earth_radius / cos(rad2deg(lat_init)); // y gps
+	zdata[2] = gps.altitude; // z gps
+	zdata[3] = zdata[2]; // z baro...
+	GPS_avail = 1;
+	return true;
+}
+
+bool kalman_handleIMUData(IMU_data imu) {
+	IMUb[0] = imu.acceleration.x * 9.81;
+	IMUb[1] = imu.acceleration.y * 9.81;
+	IMUb[2] = imu.acceleration.z * 9.81;
+	IMUb[3] = 0*imu.eulerAngles.x; // actually rotation speed not eulerAngles
+	IMUb[4] = 0*imu.eulerAngles.y;
+	IMUb[5] = 0*imu.eulerAngles.z;
+	IMU_avail = 1;
+	return true;
+}
+
+bool kalman_handleBaroData(BARO_data data) {
+	return true;
+}
+
 
 static void init(ekf_t * ekf) {
 	// Set Q, see [1]
@@ -73,16 +106,9 @@ static void init(ekf_t * ekf) {
 			ekf->Q[i][j] = Qtmp[i * 9 + j];
 	}
 
-	/*
-	 blkfill(ekf, Qxyz, 0);
-	 blkfill(ekf, Qxyz, 1);
-	 blkfill(ekf, Qxyz, 2);
-	 blkfill(ekf, Qb,   3);
-	 */
-
 	// initial covariances of state noise, measurement noise
 	float P0[9] = { 2, 2, 2, 1, 1, 1, 0.1, 0.1, 0.1 };
-	float R0[4] = { 100, 100, 10, 10 }; //accuracy of the GPS and baro
+	float R0[4] = { 20, 20, 10, 10 }; //accuracy of the GPS and baro
 
 	for (i = 0; i < 9; ++i)
 		ekf->P[i][i] = P0[i];
@@ -92,98 +118,6 @@ static void init(ekf_t * ekf) {
 
 }
 
-/*static void model(ekf_t * ekf, float SV[4][3])
- {
-
- int i, j;
-
- for (j=0; j<8; j+=2) {
- ekf->fx[j] = ekf->x[j] + T * ekf->x[j+1];
- ekf->fx[j+1] = ekf->x[j+1];
- }
-
- for (j=0; j<8; ++j)
- ekf->F[j][j] = 1;
-
- for (j=0; j<4; ++j)
- ekf->F[2*j][2*j+1] = T;
-
- float dx[4][3];
-
- for (i=0; i<4; ++i) {
- ekf->hx[i] = 0;
- for (j=0; j<3; ++j) {
- float d = ekf->fx[j*2] - SV[i][j];
- dx[i][j] = d;
- ekf->hx[i] += d*d;
- }
- ekf->hx[i] = pow(ekf->hx[i], 0.5) + ekf->fx[6];
-
- }
-
- for (i=0; i<4; ++i) {
- for (j=0; j<3; ++j)
- ekf->H[i][j*2]  = dx[i][j] / ekf->hx[i];
- ekf->H[i][6] = 1;
- }
- }*/
-
-//static void readline(char * line, FILE * fp)
-//{
-//    fgets(line, 1000, fp);
-//}
-/*static void readdata(FILE * fp, float SV_Pos[4][3], float SV_Rho[4])
- {
- char line[1000];
-
- readline(line, fp);
-
- char * p = strtok(line, ",");
-
- int i, j;
-
- for (i=0; i<4; ++i)
- for (j=0; j<3; ++j) {
- SV_Pos[i][j] = atof(p);
- p = strtok(NULL, ",");
- }
-
- for (j=0; j<4; ++j) {
- SV_Rho[j] = atof(p);
- p = strtok(NULL, ",");
- }
- }*/
-
-//static void readdata2(FILE * fp, float IMUb[6], float zdata[4])
-//{
-//    char line[1000];
-//
-//    readline(line, fp);
-//
-//    char * p = strtok(line, ",");
-//
-//    int i, j;
-//
-//    for (i=0; i<6; ++i) {
-//        IMUb[i] = atof(p);
-//        p = strtok(NULL, ",");
-//    }
-//
-//    for (j=0; j<4; ++j) {
-//        zdata[j] = atof(p);
-//        p = strtok(NULL, ",");
-//    }
-//}
-/*static void skipline(FILE * fp)
- {
- char line[1000];
- readline(line, fp);
- }*/
-
-//void error(const char * msg)
-//{
-//    fprintf(stderr, "%s\n", msg);
-//}
 void TK_kalman() {
 	// Do generic EKF initialization
 	ekf_t ekf;
@@ -191,30 +125,17 @@ void TK_kalman() {
 
 	// Do local initialization
 	init(&ekf);
-	//printf("%f, %f, %f, %f, %f, %f\n", ekf.x[0], ekf.x[1], ekf.x[2],ekf.x[3], ekf.x[4], ekf.x[5]);
 
-	// Open input data file
-	//FILE * ifp = fopen("gps.csv", "r");
-//    FILE * datafp = fopen("data.csv", "r");
-	// Skip CSV header
-	//skipline(ifp);
 
 	double IMUmd[6];
 	float IMUm[6];
-	// Make a place to store the data from the file and the output of the EKF
-	/*float SV_Pos[4][3];
-	 float SV_Rho[4];*/
-	//float Pos_KF[25][3];
-	// true
 	float F11[9][9];
-	float dt = 0.1; // fix at 10 Hz
+	float dt = ((float) EKF_PERIOD_MS)/1e3; // fix at 10 Hz
 	double sp, sr, sy, cp, cr, cy;
-	int isGPSHere = 5;
 
-	// Open output CSV file and write header
-//    const char * OUTFILE = "ekf.csv";
-//    FILE * ofp = fopen(OUTFILE, "w");
-//    fprintf(ofp, "pX,pY,pZ,vX,vY,vZ\n");
+	uint32_t start_time = 0;
+	uint32_t now = 0;
+
 
 	int j, k;
 	for (j = 0; j < 9; j++)
@@ -224,15 +145,9 @@ void TK_kalman() {
 		IMUb[j] = 0;
 	}
 
-	// Loop till no more data
-	//IMUb[] acc_x, acc_y, acc_z, gyro_x, gyro_y, gyro_z //zdata gps_x, gps_y, gps_z, alt
+	start_time = HAL_GetTick();
 
 	while (1) {
-
-		//readdata(ifp, SV_Pos, SV_Rho);
-		// true model 4 rocket
-//        readdata2(datafp, IMUb, zdata);
-		//TODO: Add data
 		if (IMU_avail == 1) {
 			IMU_avail = 0;
 			//getting the data of the captor in the mapping frame IMUb to IMUm
@@ -292,34 +207,26 @@ void TK_kalman() {
 			ekf.hx[2] = ekf.fx[2];
 			ekf.hx[3] = ekf.fx[2];
 
-			if (isGPSHere >= 5) { // go for the kalman
+			if (GPS_avail) { // go for the kalman
+				GPS_avail = 0;
 				//fill H
 				ekf.H[0][0] = 1;
 				ekf.H[1][1] = 1;
 				ekf.H[2][2] = 1;
 				ekf.H[3][2] = 1;
-				ekf_step(&ekf, zdata);
 				ekf.x[6] = 0; // force orientation pointing up
 				ekf.x[7] = 0;
 				ekf.x[8] = 0;
-				isGPSHere = 0;
 			} else { //simple INS
 				//fill H
 				ekf.H[0][0] = 0;
 				ekf.H[1][1] = 0;
 				ekf.H[2][2] = 0;
 				ekf.H[3][2] = 1;
-				ekf_step(&ekf, zdata);
-				//isGPSHere++;
 			}
 
-			// grab positions, ignoring velocities
-			/*for (k=0; k<3; k++)
-			 Pos_KF[j][k] = ekf.x[k];*/
+			ekf_step(&ekf, zdata);
 
-//        fprintf(ofp,"%f, %f, %f, %f, %f, %f\n", ekf.x[0], ekf.x[1], ekf.x[2],ekf.x[3], ekf.x[4], ekf.x[5]);
-			//printf("%f, %f, %f, %f, %f, %f\n", ekf.x[0], ekf.x[1], ekf.x[2],ekf.x[3], ekf.x[4], ekf.x[5]);
-			//printf("%f, %f, %f, %f, %f, %f, %f, %f, %f, %f \n", IMUb[0], IMUb[1],IMUb[2],IMUb[3],IMUb[4],IMUb[5],zdata[0],zdata[1],zdata[2],zdata[3]);
 
 			//send estimate to the CAN
 			can_setFrame((int32_t) (1000 * ekf.x[0]), DATA_ID_KALMAN_X, HAL_GetTick());
@@ -328,39 +235,19 @@ void TK_kalman() {
 			can_setFrame((int32_t) (1000 * ekf.x[3]), DATA_ID_KALMAN_VX, HAL_GetTick());
 			can_setFrame((int32_t) (1000 * ekf.x[4]), DATA_ID_KALMAN_VY, HAL_GetTick());
 			can_setFrame((int32_t) (1000 * ekf.x[5]), DATA_ID_KALMAN_VZ, HAL_GetTick());
-			can_setFrame((int32_t) (1000 * ekf.x[6]), DATA_ID_KALMAN_YAW, HAL_GetTick()); //todo check
-			can_setFrame((int32_t) (1000 * ekf.x[7]), DATA_ID_KALMAN_PITCH, HAL_GetTick()); //todo check
-			can_setFrame((int32_t) (1000 * ekf.x[8]), DATA_ID_KALMAN_ROLL, HAL_GetTick()); //todo check
-			osDelay(100);
+			can_setFrame((int32_t) (180 / 3.14 * ekf.x[6]), DATA_ID_KALMAN_ROLL, HAL_GetTick());
+			can_setFrame((int32_t) (180 / 3.14 * ekf.x[7]), DATA_ID_KALMAN_PITCH, HAL_GetTick());
+			can_setFrame((int32_t) (180 / 3.14 * ekf.x[8]), DATA_ID_KALMAN_YAW, HAL_GetTick());
+			can_setFrame((int32_t) (1000 * zdata[0]), 51, HAL_GetTick());
+			can_setFrame((int32_t) (1000 * zdata[1]), 52, HAL_GetTick());
 		}
 		else {
-			osDelay(10);
+			// no IMU data available :sadface:
 		}
+
+		// ensure periodicity
+		now = HAL_GetTick();
+		osDelay(EKF_PERIOD_MS - (now-start_time));
+		start_time += EKF_PERIOD_MS;
 	}
-
-	// Compute means of filtered positions
-	/*float mean_Pos_KF[3] = {0, 0, 0};
-	 for (j=0; j<25; ++j)
-	 for (k=0; k<3; ++k)
-	 mean_Pos_KF[k] += Pos_KF[j][k];
-	 for (k=0; k<3; ++k)
-	 mean_Pos_KF[k] /= 25;
-
-
-	 // Dump filtered positions minus their means
-	 for (j=0; j<25; ++j) {
-	 fprintf(ofp, "%f,%f,%f\n",
-	 Pos_KF[j][0]-mean_Pos_KF[0], Pos_KF[j][1]-mean_Pos_KF[1], Pos_KF[j][2]-mean_Pos_KF[2]);
-	 } */
-	/*for(j=0;j<8;j++){
-	 for(k=0;k<8;k++)
-	 printf("%f, ", ekf.Q[j][k]*10000);
-	 printf("\n");
-	 }*/
-
-	// Done!
-//    fclose(datafp);
-//    fclose(ofp);
-//    printf("Wrote file %s\n", OUTFILE);
-//    return 0;
 }

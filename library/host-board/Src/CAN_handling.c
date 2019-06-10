@@ -19,12 +19,17 @@ typedef float float32_t;
 #include "Telemetry/telemetry_handling.h"
 #include "Misc/datastructs.h"
 #include "sd_card.h"
+#include "ekf/tiny_ekf.h"
 
 #define BUFFER_SIZE 128
 
 bool handleGPSData(GPS_data data) {
 #ifdef XBEE
 	return telemetry_handleGPSData(data);
+#elif defined(KALMAN)
+	if (data.lat < 1e3) {
+		return kalman_handleGPSData(data);
+	}
 #endif
 	return false;
 }
@@ -32,6 +37,8 @@ bool handleGPSData(GPS_data data) {
 bool handleIMUData(IMU_data data) {
 #ifdef XBEE
 	return telemetry_handleIMUData(data);
+#elif defined(KALMAN)
+	kalman_handleIMUData(data);
 #endif
 	return false;
 }
@@ -39,6 +46,8 @@ bool handleIMUData(IMU_data data) {
 bool handleBaroData(BARO_data data) {
 #ifdef XBEE
 	return telemetry_handleBaroData(data);
+#elif defined(KALMAN)
+	kalman_handleBaroData(data);
 #endif
 	return false;
 }

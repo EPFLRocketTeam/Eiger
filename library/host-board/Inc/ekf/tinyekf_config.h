@@ -8,6 +8,9 @@
  * MIT License
  */
 
+#ifndef TINY_EKF_H_
+#define TINY_EFK_H_
+
 /* states */
 #define Nsta 9
 
@@ -46,3 +49,5 @@ typedef struct {
     float tmp5[Mobs]; 
 
 } ekf_t;
+
+#endif

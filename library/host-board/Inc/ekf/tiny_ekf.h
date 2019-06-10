@@ -6,6 +6,11 @@
  * MIT License
  */
 
+#ifndef TINY_EKF_H_
+#define TINY_EFK_H_
+#include "Misc/datastructs.h"
+#include <stdbool.h>
+
 
 /**
   * Initializes an EKF structure.
@@ -46,6 +51,7 @@
         float tmp5[M]; 
     * </pre>
   */
+
 void mat_exp(float F[9][9], float PHI[9][9], int n);
 
 void updateP(float Pmatrix[9][9], float F[9][9], float Q[9][9]);
@@ -53,6 +59,10 @@ void updateP(float Pmatrix[9][9], float F[9][9], float Q[9][9]);
 void ekf_init(void * ekf, int n, int m);
 
 void TK_kalman();
+
+bool kalman_handleGPSData(GPS_data data);
+bool kalman_handleIMUData(IMU_data data);
+bool kalman_handleBaroData(BARO_data data);
 
 /**
   * Runs one step of EKF prediction and update. Your code should first build a model, setting
@@ -62,3 +72,5 @@ void TK_kalman();
   * @return 0 on success, 1 on failure caused by non-positive-definite matrix.
   */
 int ekf_step(void * ekf, float * z);
+
+#endif
