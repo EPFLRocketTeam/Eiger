@@ -75,10 +75,6 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 
-
-#define AB_CONTROL
-#define SDCARD
-
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
