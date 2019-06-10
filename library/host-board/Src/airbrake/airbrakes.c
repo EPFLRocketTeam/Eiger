@@ -33,7 +33,7 @@ void TK_ab_controller (void const * argument)
   // Finite State Machine -------------------------
   for (;;)
     {
-
+/*
 	  switch(currentState){
 
 	  	  case STATE_CALIBRATION:
@@ -163,6 +163,7 @@ void TK_ab_controller (void const * argument)
 
 
 	  }
+	  */
       osDelay (1);
     }
 
