@@ -12,8 +12,6 @@
 
 #include "Misc/data_handling.h"
 #include "Misc/datagram_builder.h"
-#include "Misc/sd_sync.h"
-
 #include "Telemetry/telemetry_protocol.h"
 #include "Telemetry/simpleCRC.h"
 
@@ -21,6 +19,7 @@
 
 extern "C" {
 #include "CAN_communication.h"
+#include "sd_card.h"
 }
 
 #define TELE_TIMEMIN 100

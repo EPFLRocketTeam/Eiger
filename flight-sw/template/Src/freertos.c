@@ -57,12 +57,13 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */     
 #include "usart.h"
+
+#include "sd_card.h"
 #include "led.h"
 #include "Telemetry/xbee.h"
 #include "Misc/Common.h"
 #include "Misc/data_handling.h"
 #include "airbrake/airbrake.h"
-#include "Misc/sd_sync.h"
 #include "Sensors/sensor_board.h"
 #include "Sensors/GPS_board.h"
 /* USER CODE END Includes */

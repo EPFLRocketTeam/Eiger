@@ -1,5 +1,5 @@
 /*
- * sd_sync.c
+ * sd_card.c
  *
  *  Created on: 15 Nov 2018
  *      Author: Clément Nussbaumer
@@ -56,7 +56,7 @@ void swap_buffer() {
 int sd_write(char str[], int size) {
 	int ret = 0;
 
-	if (xSemaphoreTake(buffer_semaphore, 10) == pdTRUE) {
+	if (xSemaphoreTake(buffer_semaphore, 0) == pdTRUE) {
 		if (sd_buffer_pointer_tx+size < SD_BUFFER_SIZE) {
 			for (int i=0 ; i<size ; i++) {
 				sd_buffer_tx[sd_buffer_pointer_tx++] = str[i];
