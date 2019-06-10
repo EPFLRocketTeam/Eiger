@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>telemetry-board</name>
+	<name>template</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -37,11 +37,6 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>host-board</name>
-			<type>2</type>
-			<locationURI>PARENT-2-PROJECT_LOC/library/host-board</locationURI>
-		</link>
-		<link>
 			<name>Drivers/STM32F4xx_HAL_Driver</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -59,212 +54,218 @@
 		<link>
 			<name>Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal.c</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/library/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.c</locationURI>
+			<locationURI>LIB_FOLDER/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.c</locationURI>
 		</link>
 		<link>
 			<name>Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal_can.c</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/library/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_can.c</locationURI>
+			<locationURI>LIB_FOLDER/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_can.c</locationURI>
 		</link>
 		<link>
 			<name>Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal_cortex.c</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/library/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cortex.c</locationURI>
+			<locationURI>LIB_FOLDER/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cortex.c</locationURI>
 		</link>
 		<link>
 			<name>Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal_dma.c</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/library/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma.c</locationURI>
+			<locationURI>LIB_FOLDER/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma.c</locationURI>
 		</link>
 		<link>
 			<name>Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal_dma_ex.c</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/library/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma_ex.c</locationURI>
+			<locationURI>LIB_FOLDER/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma_ex.c</locationURI>
 		</link>
 		<link>
 			<name>Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal_flash.c</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/library/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash.c</locationURI>
+			<locationURI>LIB_FOLDER/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash.c</locationURI>
 		</link>
 		<link>
 			<name>Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal_flash_ex.c</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/library/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ex.c</locationURI>
+			<locationURI>LIB_FOLDER/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ex.c</locationURI>
 		</link>
 		<link>
 			<name>Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal_flash_ramfunc.c</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/library/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ramfunc.c</locationURI>
+			<locationURI>LIB_FOLDER/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ramfunc.c</locationURI>
 		</link>
 		<link>
 			<name>Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal_gpio.c</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/library/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_gpio.c</locationURI>
+			<locationURI>LIB_FOLDER/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_gpio.c</locationURI>
 		</link>
 		<link>
 			<name>Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal_i2c.c</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/library/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_i2c.c</locationURI>
+			<locationURI>LIB_FOLDER/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_i2c.c</locationURI>
 		</link>
 		<link>
 			<name>Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal_i2c_ex.c</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/library/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_i2c_ex.c</locationURI>
+			<locationURI>LIB_FOLDER/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_i2c_ex.c</locationURI>
 		</link>
 		<link>
 			<name>Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal_pwr.c</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/library/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr.c</locationURI>
+			<locationURI>LIB_FOLDER/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr.c</locationURI>
 		</link>
 		<link>
 			<name>Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal_pwr_ex.c</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/library/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr_ex.c</locationURI>
+			<locationURI>LIB_FOLDER/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr_ex.c</locationURI>
 		</link>
 		<link>
 			<name>Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal_qspi.c</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/library/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_qspi.c</locationURI>
+			<locationURI>LIB_FOLDER/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_qspi.c</locationURI>
 		</link>
 		<link>
 			<name>Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal_rcc.c</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/library/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc.c</locationURI>
+			<locationURI>LIB_FOLDER/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc.c</locationURI>
 		</link>
 		<link>
 			<name>Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal_rcc_ex.c</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/library/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc_ex.c</locationURI>
+			<locationURI>LIB_FOLDER/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc_ex.c</locationURI>
 		</link>
 		<link>
 			<name>Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal_sd.c</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/library/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_sd.c</locationURI>
+			<locationURI>LIB_FOLDER/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_sd.c</locationURI>
 		</link>
 		<link>
 			<name>Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal_spi.c</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/library/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_spi.c</locationURI>
+			<locationURI>LIB_FOLDER/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_spi.c</locationURI>
 		</link>
 		<link>
 			<name>Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal_tim.c</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/library/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim.c</locationURI>
+			<locationURI>LIB_FOLDER/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim.c</locationURI>
 		</link>
 		<link>
 			<name>Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal_tim_ex.c</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/library/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim_ex.c</locationURI>
+			<locationURI>LIB_FOLDER/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim_ex.c</locationURI>
 		</link>
 		<link>
 			<name>Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal_uart.c</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/library/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.c</locationURI>
+			<locationURI>LIB_FOLDER/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.c</locationURI>
 		</link>
 		<link>
 			<name>Drivers/STM32F4xx_HAL_Driver/stm32f4xx_ll_adc.c</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/library/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_adc.c</locationURI>
+			<locationURI>LIB_FOLDER/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_adc.c</locationURI>
 		</link>
 		<link>
 			<name>Drivers/STM32F4xx_HAL_Driver/stm32f4xx_ll_dma.c</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/library/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_dma.c</locationURI>
+			<locationURI>LIB_FOLDER/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_dma.c</locationURI>
 		</link>
 		<link>
 			<name>Drivers/STM32F4xx_HAL_Driver/stm32f4xx_ll_exti.c</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/library/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_exti.c</locationURI>
+			<locationURI>LIB_FOLDER/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_exti.c</locationURI>
 		</link>
 		<link>
 			<name>Drivers/STM32F4xx_HAL_Driver/stm32f4xx_ll_gpio.c</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/library/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_gpio.c</locationURI>
+			<locationURI>LIB_FOLDER/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_gpio.c</locationURI>
 		</link>
 		<link>
 			<name>Drivers/STM32F4xx_HAL_Driver/stm32f4xx_ll_rcc.c</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/library/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_rcc.c</locationURI>
+			<locationURI>LIB_FOLDER/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_rcc.c</locationURI>
 		</link>
 		<link>
 			<name>Drivers/STM32F4xx_HAL_Driver/stm32f4xx_ll_sdmmc.c</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/library/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_sdmmc.c</locationURI>
+			<locationURI>LIB_FOLDER/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_sdmmc.c</locationURI>
 		</link>
 		<link>
 			<name>Drivers/STM32F4xx_HAL_Driver/stm32f4xx_ll_tim.c</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/library/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_tim.c</locationURI>
+			<locationURI>LIB_FOLDER/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_tim.c</locationURI>
 		</link>
 		<link>
 			<name>Drivers/STM32F4xx_HAL_Driver/stm32f4xx_ll_utils.c</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/library/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_utils.c</locationURI>
+			<locationURI>LIB_FOLDER/STM32Cube_FW_F4_V1.23.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_utils.c</locationURI>
 		</link>
 		<link>
 			<name>Middlewares/FatFs/diskio.c</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/library/STM32Cube_FW_F4_V1.23.0/Middlewares/Third_Party/FatFs/src/diskio.c</locationURI>
+			<locationURI>LIB_FOLDER/STM32Cube_FW_F4_V1.23.0/Middlewares/Third_Party/FatFs/src/diskio.c</locationURI>
 		</link>
 		<link>
 			<name>Middlewares/FatFs/ff.c</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/library/STM32Cube_FW_F4_V1.23.0/Middlewares/Third_Party/FatFs/src/ff.c</locationURI>
+			<locationURI>LIB_FOLDER/STM32Cube_FW_F4_V1.23.0/Middlewares/Third_Party/FatFs/src/ff.c</locationURI>
 		</link>
 		<link>
 			<name>Middlewares/FatFs/ff_gen_drv.c</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/library/STM32Cube_FW_F4_V1.23.0/Middlewares/Third_Party/FatFs/src/ff_gen_drv.c</locationURI>
+			<locationURI>LIB_FOLDER/STM32Cube_FW_F4_V1.23.0/Middlewares/Third_Party/FatFs/src/ff_gen_drv.c</locationURI>
 		</link>
 		<link>
 			<name>Middlewares/FatFs/syscall.c</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/library/STM32Cube_FW_F4_V1.23.0/Middlewares/Third_Party/FatFs/src/option/syscall.c</locationURI>
+			<locationURI>LIB_FOLDER/STM32Cube_FW_F4_V1.23.0/Middlewares/Third_Party/FatFs/src/option/syscall.c</locationURI>
 		</link>
 		<link>
 			<name>Middlewares/FreeRTOS/cmsis_os.c</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/library/STM32Cube_FW_F4_V1.23.0/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.c</locationURI>
+			<locationURI>LIB_FOLDER/STM32Cube_FW_F4_V1.23.0/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.c</locationURI>
 		</link>
 		<link>
 			<name>Middlewares/FreeRTOS/croutine.c</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/library/STM32Cube_FW_F4_V1.23.0/Middlewares/Third_Party/FreeRTOS/Source/croutine.c</locationURI>
+			<locationURI>LIB_FOLDER/STM32Cube_FW_F4_V1.23.0/Middlewares/Third_Party/FreeRTOS/Source/croutine.c</locationURI>
 		</link>
 		<link>
 			<name>Middlewares/FreeRTOS/event_groups.c</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/library/STM32Cube_FW_F4_V1.23.0/Middlewares/Third_Party/FreeRTOS/Source/event_groups.c</locationURI>
+			<locationURI>LIB_FOLDER/STM32Cube_FW_F4_V1.23.0/Middlewares/Third_Party/FreeRTOS/Source/event_groups.c</locationURI>
 		</link>
 		<link>
 			<name>Middlewares/FreeRTOS/heap_4.c</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/library/STM32Cube_FW_F4_V1.23.0/Middlewares/Third_Party/FreeRTOS/Source/portable/MemMang/heap_4.c</locationURI>
+			<locationURI>LIB_FOLDER/STM32Cube_FW_F4_V1.23.0/Middlewares/Third_Party/FreeRTOS/Source/portable/MemMang/heap_4.c</locationURI>
 		</link>
 		<link>
 			<name>Middlewares/FreeRTOS/list.c</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/library/STM32Cube_FW_F4_V1.23.0/Middlewares/Third_Party/FreeRTOS/Source/list.c</locationURI>
+			<locationURI>LIB_FOLDER/STM32Cube_FW_F4_V1.23.0/Middlewares/Third_Party/FreeRTOS/Source/list.c</locationURI>
 		</link>
 		<link>
 			<name>Middlewares/FreeRTOS/port.c</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/library/STM32Cube_FW_F4_V1.23.0/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/port.c</locationURI>
+			<locationURI>LIB_FOLDER/STM32Cube_FW_F4_V1.23.0/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/port.c</locationURI>
 		</link>
 		<link>
 			<name>Middlewares/FreeRTOS/queue.c</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/library/STM32Cube_FW_F4_V1.23.0/Middlewares/Third_Party/FreeRTOS/Source/queue.c</locationURI>
+			<locationURI>LIB_FOLDER/STM32Cube_FW_F4_V1.23.0/Middlewares/Third_Party/FreeRTOS/Source/queue.c</locationURI>
 		</link>
 		<link>
 			<name>Middlewares/FreeRTOS/tasks.c</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/library/STM32Cube_FW_F4_V1.23.0/Middlewares/Third_Party/FreeRTOS/Source/tasks.c</locationURI>
+			<locationURI>LIB_FOLDER/STM32Cube_FW_F4_V1.23.0/Middlewares/Third_Party/FreeRTOS/Source/tasks.c</locationURI>
 		</link>
 		<link>
 			<name>Middlewares/FreeRTOS/timers.c</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/library/STM32Cube_FW_F4_V1.23.0/Middlewares/Third_Party/FreeRTOS/Source/timers.c</locationURI>
+			<locationURI>LIB_FOLDER/STM32Cube_FW_F4_V1.23.0/Middlewares/Third_Party/FreeRTOS/Source/timers.c</locationURI>
 		</link>
 	</linkedResources>
+	<variableList>
+		<variable>
+			<name>LIB_FOLDER</name>
+			<value>$%7BPARENT-2-PROJECT_LOC%7D/library</value>
+		</variable>
+	</variableList>
 </projectDescription>

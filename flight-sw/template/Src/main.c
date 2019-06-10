@@ -124,7 +124,9 @@ int main(void)
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
-
+  #ifdef GPS
+  HAL_Delay(250); // wait for the GPS to initialize
+  #endif
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */

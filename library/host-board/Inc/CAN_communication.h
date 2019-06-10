@@ -19,8 +19,6 @@ typedef struct
     uint32_t id_CAN;
 } CAN_msg;
 
-extern volatile CAN_msg can_current_msg;
-
 // Define all the data ID's
 #define DATA_ID_PRESSURE 0
 #define DATA_ID_ACCELERATION_X 1
@@ -62,6 +60,8 @@ extern volatile CAN_msg can_current_msg;
 
 void CAN_Config(uint32_t id);
 void can_setFrame(uint32_t data, uint8_t data_id, uint32_t timestamp);
-uint32_t can_readFrame(void);
+
+uint32_t can_msgPending();
+CAN_msg can_readBuffer();
 
 #endif /* CAN_COMMUNICATION_H_ */

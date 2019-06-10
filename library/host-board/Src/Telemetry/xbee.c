@@ -93,7 +93,7 @@ void TK_xBeeTelemetry (const void* args)
 
 void receiveData ()
 {
-
+	// do nothing
 }
 
 void sendData (uint8_t* txData, uint16_t txDataSize)
@@ -175,7 +175,9 @@ void sendXbeeFrame ()
 
 void HAL_UART_TxCpltCallback (UART_HandleTypeDef *huart)
 {
-  osSemaphoreRelease (xBeeTxBufferSemHandle);
+	if (huart == xBee_huart) {
+		osSemaphoreRelease (xBeeTxBufferSemHandle);
+	}
 }
 
 void initXbee ()

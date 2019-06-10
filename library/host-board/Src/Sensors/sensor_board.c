@@ -11,7 +11,7 @@
 #include <inttypes.h>
 #include <math.h>
 
-#define I2C_TIMEOUT 10
+#define I2C_TIMEOUT 3
 
 int8_t init_bme();
 int8_t init_bno();
@@ -200,13 +200,17 @@ inline float altitudeFromPressure(float pressure_hPa)
 
 int8_t stm32_i2c_read (uint8_t dev_id, uint8_t reg_addr, uint8_t *data, uint16_t len)
 {
+	vTaskSuspendAll();
 	uint8_t rslt = HAL_I2C_Mem_Read(&hi2c3, dev_id << 1, reg_addr, I2C_MEMADD_SIZE_8BIT, data, len, I2C_TIMEOUT);
+	xTaskResumeAll();
 	return rslt;
 }
 
 int8_t stm32_i2c_write (uint8_t dev_id, uint8_t reg_addr, uint8_t *data, uint16_t len)
 {
+	vTaskSuspendAll();
 	uint8_t rslt = HAL_I2C_Mem_Write(&hi2c3, dev_id << 1, reg_addr, I2C_MEMADD_SIZE_8BIT, data, len, I2C_TIMEOUT);
+	xTaskResumeAll();
 	return rslt;
 }
 
