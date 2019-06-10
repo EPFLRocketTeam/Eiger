@@ -34,18 +34,17 @@ typedef struct
 #define DATA_ID_GPS_ALTITUDE 10
 #define DATA_ID_GPS_SATS     11
 
-#define CAN_ID_STATE	50
+#define DATA_ID_KALMAN_X     40
+#define DATA_ID_KALMAN_Y     41
+#define DATA_ID_KALMAN_Z     42
+#define DATA_ID_KALMAN_VX    43
+#define DATA_ID_KALMAN_VY    44
+#define DATA_ID_KALMAN_VZ    45
+#define DATA_ID_KALMAN_YAW   46
+#define DATA_ID_KALMAN_PITCH 47
+#define DATA_ID_KALMAN_ROLL  48
 
-#define DATA_ID_KALMAN_X	40
-#define DATA_ID_KALMAN_Y	41
-#define DATA_ID_KALMAN_Z	42
-#define DATA_ID_KALMAN_VX	43
-#define DATA_ID_KALMAN_VY	44
-#define DATA_ID_KALMAN_VZ	45
-#define DATA_ID_KALMAN_YAW	46
-#define DATA_ID_KALMAN_PITCH	47s
-#define DATA_ID_KALMAN_ROLL	48
-
+#define DATA_ID_STATE 50
 
 
 
