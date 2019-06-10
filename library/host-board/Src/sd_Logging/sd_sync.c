@@ -32,9 +32,7 @@ volatile uint32_t sd_buffer_pointer_rx = 0;
 
 int led_sdcard_id;
 
-int sd_init = 0;
-
-SemaphoreHandle_t buffer_semaphore;
+SemaphoreHandle_t buffer_semaphore = NULL;
 
 void swap_buffer() {
 	volatile uint32_t tmp_pointer;
@@ -57,7 +55,6 @@ void swap_buffer() {
 
 int sd_write(char str[], int size) {
 	int ret = 0;
-	if (!sd_init) return -2; // not yet initialized
 
 	if (xSemaphoreTake(buffer_semaphore, 10) == pdTRUE) {
 		if (sd_buffer_pointer_tx+size < SD_BUFFER_SIZE) {
@@ -132,7 +129,10 @@ FRESULT sync_sd_card(FRESULT result) {
 	static uint32_t lastSync = 0;
 	static int init = 0;
 
-	if (!init) lastSync = HAL_GetTick ();
+	if (!init) {
+		lastSync = HAL_GetTick ();
+		init = 1;
+	}
 
 	if ((HAL_GetTick () - lastSync) > 1000) // synchronization every second with the SD card.
 	{
@@ -154,8 +154,6 @@ void TK_sd_sync (void const* pvArgs)
 	  }
     }
 
-  sd_init = 1;
-
   UINT bytes_written = 0;
   f_write (&sensorsFile, sensor_file_header, strlen (sensor_file_header), &bytes_written);
   f_write (&eventsFile, events_file_header, strlen (events_file_header), &bytes_written);
@@ -166,16 +164,26 @@ void TK_sd_sync (void const* pvArgs)
   osDelay (1000);
   FRESULT result = 0;
 
+  xSemaphoreGive(buffer_semaphore);
+
   for (;;)
     {
-      if (sd_buffer_pointer_rx > 0) {
-    	  result |= f_write (&sensorsFile, sd_buffer_rx, sd_buffer_pointer_rx, &bytes_written);
-      } else if (sd_buffer_pointer_tx > 0) {
+      if (sd_buffer_pointer_rx == 0 && sd_buffer_pointer_tx > 0) {
     	  // nothing to write in rx buffer, but stuff awaiting in tx
     	  swap_buffer(); // will wait next tick to write
       }
 
-      sync_sd_card(result);
+      if (sd_buffer_pointer_rx > 0) {
+    	  result |= f_write (&sensorsFile, sd_buffer_rx, sd_buffer_pointer_rx, &bytes_written);
+    	  sd_buffer_pointer_rx -= bytes_written;
+      }
+
+      if (sd_buffer_pointer_rx == 0 && sd_buffer_pointer_tx > 0) {
+    	  // nothing to write in rx buffer, but stuff awaiting in tx
+    	  swap_buffer(); // will wait next tick to write
+      }
+
+      result = sync_sd_card(result);
 
       if (result == FR_OK) {
     	  led_set_TK_rgb(led_sdcard_id, 0, 50, 0);

@@ -72,10 +72,17 @@ Telemetry_Message createGPSDatagram (uint32_t seqNumber, GPS_data gpsData)
 }
 
 
-void sendSDcard(uint32_t id_can, uint32_t timestamp, uint8_t id, uint32_t data) {
+void sendSDcard(CAN_msg msg) {
    static uint32_t sdSeqNumber = 0;
    sdSeqNumber++;
-   sprintf((char*) buffer, "%lu\t%lu\t%d\t%ld\n", sdSeqNumber, HAL_GetTick(), id, (int32_t) data);
+
+   uint32_t id_can = msg.id_CAN;
+   uint32_t timestamp = msg.timestamp;
+   uint8_t id = msg.id;
+   uint32_t data = msg.data;
+
+   sprintf((char*) buffer, "%lu\t%lu\t%d\t%ld\n",
+		   sdSeqNumber, HAL_GetTick(), id, (int32_t) data);
 
    sd_write(buffer, strlen(buffer));
 }
@@ -104,7 +111,7 @@ void TK_telemetry_data (void const * args)
 	  while (can_msgPending()) { // check if new data
 		msg = can_readBuffer();
 	    // add to SD card
-	    sendSDcard(msg.id_CAN, msg.timestamp, msg.id, msg.data);
+	    sendSDcard(msg);
 
 	    switch(msg.id) {
 	    case DATA_ID_PRESSURE:
