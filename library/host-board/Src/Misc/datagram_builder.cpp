@@ -12,10 +12,12 @@
 #include <Misc/datagram_builder.h>
 #include <stm32f4xx_hal.h>
 
+#define MALLOC_SIZE 64 // same malloc size for all datagrams, otherwise it fragments the memory
+
 DatagramBuilder::DatagramBuilder (uint16_t datagramPayloadSize, uint8_t datagramType, uint32_t datagramSequenceNumber) :
     datagramSize (datagramPayloadSize + TOTAL_DATAGRAM_OVERHEAD)
 {
-  datagramPtr = pvPortMalloc (datagramSize);
+  datagramPtr = pvPortMalloc (MALLOC_SIZE);
   if (datagramPtr != NULL)
     {
       currentIdx = 0;

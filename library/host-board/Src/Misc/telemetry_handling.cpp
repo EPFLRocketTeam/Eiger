@@ -2,7 +2,8 @@
  * data_handling.c
  *
  *  Created on: 19 Apr 2018
- *      Author: Cl�ment Nussbaumer
+ *      Author: Clement Nussbaumer
+ *      Alexandre Devienne
  */
 
 #include "cmsis_os.h"
@@ -97,11 +98,14 @@ void TK_telemetry_data (void const * args)
   uint32_t gps_time = HAL_GetTick();
   CAN_msg msg;
 
+  Telemetry_Message m1;
+  Telemetry_Message m2;
+
   bool new_baro = 0;
   bool new_imu = 0;
   bool new_gps = 0;
 
-  osDelay (1000); // Wait for the other threads to be ready
+  osDelay (500); // Wait for the other threads to be ready
   uint32_t telemetrySeqNumber = 0;
 
   baro.temperature = 20;
@@ -158,8 +162,10 @@ void TK_telemetry_data (void const * args)
 	  }
 
 	  if (new_gps && (HAL_GetTick() - gps_time > GPS_TIMEMIN)) {
-		Telemetry_Message m = createGPSDatagram (telemetrySeqNumber++, gpsData);
-		osMessagePut (xBeeQueueHandle, (uint32_t) &m, 100);
+		m1 = createGPSDatagram (telemetrySeqNumber++, gpsData);
+		if (osMessagePut (xBeeQueueHandle, (uint32_t) &m1, 10) != osOK) {
+			vPortFree(m1.ptr); // free the datagram if we couldn't queue it
+		}
 		// reset all the data
 		gpsData.hdop     = 0xffffffff;
 		gpsData.lat      = 0xffffffff;
@@ -172,8 +178,10 @@ void TK_telemetry_data (void const * args)
 
 	  // if both sensor data are new or timeout
 	  if ((new_baro || new_imu) && (HAL_GetTick() - tele_time > TELE_TIMEMIN)) {
-		  Telemetry_Message m = createTelemetryDatagram (&imu, &baro, meas_time, telemetrySeqNumber++);
-		  osMessagePut (xBeeQueueHandle, (uint32_t) &m, 10);
+		  m2 = createTelemetryDatagram (&imu, &baro, meas_time, telemetrySeqNumber++);
+		  if (osMessagePut (xBeeQueueHandle, (uint32_t) &m2, 10) != osOK) {
+			  vPortFree(m2.ptr); // free the datagram if we couldn't queue it
+		  }
 		  tele_time = HAL_GetTick();
 	  	  new_baro = 0;
 	  	  new_imu  = 0;

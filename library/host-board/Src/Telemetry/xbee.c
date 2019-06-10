@@ -74,10 +74,11 @@ void TK_xBeeTelemetry (const void* args)
           sendXbeeFrame();
           packetStartTime = HAL_GetTick();
         }
-
-      osEvent event = osMessageGet (xBeeQueueHandle, 5);
-      if (event.status == osEventMessage)
-        {
+      osEvent event;
+      do {
+       event = osMessageGet (xBeeQueueHandle, 5);
+       if (event.status == osEventMessage)
+       {
           if (currentXbeeTxBufPos == 0 && elapsed != 0){
               packetStartTime = HAL_GetTick();
           }
@@ -86,6 +87,7 @@ void TK_xBeeTelemetry (const void* args)
           sendData (m->ptr, m->size);
           vPortFree (m->ptr);
         }
+      } while(event.status == osEventMessage);
 
       osDelay(10);
     }
