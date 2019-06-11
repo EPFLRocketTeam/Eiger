@@ -13,7 +13,7 @@ from comm_lib.helper import safe_list_get, dict_str_to_key
 
 
 OUTPUT_FILE = 'log_rx.txt'
-INPUT_FILE = 'test.txt'
+DEFAULT_INPUT_FILE = None
 state = {}
 
 _time_t0 = None
@@ -41,6 +41,11 @@ def init_pcan(channel, baudrate):
 
     return pcan
 
+def add_msg(cache, msg, special=False):
+    cache.update([(msg.code_field,
+        {'can_id':msg.ID, 'data':msg.data_field, 'self_time':msg.timestamp_field, 'update_time':getTime(),
+        'special':special})])
+
 
 def monitor(state):
     pcan = state['pcan']
@@ -61,11 +66,10 @@ def monitor(state):
         if result[0] == PCANBasic.PCAN_ERROR_OK:
             msg=CAN.Message.fromTPCANMsg(result[1])
             time = getTime()
-            logger.addMsg(msg, time)
+            # logger.addMsg(msg, time)
 
             # print (msg)
-            message_cache.update([(msg.code_field,
-                {'can_id':msg.ID, 'data':msg.data_field, 'self_time':msg.timestamp_field, 'update_time':time})])
+            add_msg(message_cache, msg)
 
         elif result[0] == PCANBasic.PCAN_ERROR_QRCVEMPTY:
             select.select([fd],[],[]) # blocking call until frame ready
@@ -75,6 +79,9 @@ def replayLog(state):
     pcan = state['pcan']
     channel = state['pcan_channel']
     log_file = state['log_file']
+    message_cache = state['message_cache']
+
+    if log_file == None: return
 
     log = CAN.CanLog()
     log.load(log_file)
@@ -89,6 +96,7 @@ def replayLog(state):
         msgs = log.getMsgInDelta(t_previous, t_now)
         for m in msgs: 
             rst = pcan.Write(channel, m)
+            add_msg(message_cache, m, special=True)
             # print(t_now, m)
             if rst != PCANBasic.PCAN_ERROR_OK: print("Transmit Error!", pcan.GetErrorText(rst))
 
@@ -139,6 +147,8 @@ def redraw(state):
                                                     safe_list_get(mid_str, 1, ""),     # id unit
                                                     message_cache[mid]["self_time"]/1000, # self time, from ms to s
                                                     message_cache[mid]["update_time"]) # time
+            if message_cache[mid]['special']:
+                s = s + " !Sent! "
             screen.addstr(row_id, 2, s)
             row_id = row_id + 1
     
@@ -152,7 +162,10 @@ def main():
     baudrate = PCANBasic.PCAN_BAUD_250K
     pcan = init_pcan(channel, baudrate)
     
-    log_file = INPUT_FILE
+    log_file = DEFAULT_INPUT_FILE
+    
+    if len(sys.argv)>=2:
+        log_file = sys.argv[1]
 
     # setup global variable and window
     state = {
@@ -160,7 +173,7 @@ def main():
         "pcan": pcan,
         "pcan_channel": channel,
         "screen": curses.initscr(),
-        "log_file":INPUT_FILE,
+        "log_file":log_file,
         "logger": CAN.CanLog(),
     }
     curses.noecho() # turn off echo of type in character
