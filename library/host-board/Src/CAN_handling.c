@@ -17,6 +17,8 @@ typedef float float32_t;
 #include "main.h"
 #include "led.h"
 #include "Telemetry/telemetry_handling.h"
+#include "airbrake/airbrake.h"
+#include "Sensors/GPS_board.h"
 #include "Misc/datastructs.h"
 #include "sd_card.h"
 #include "ekf/tiny_ekf.h"
@@ -169,4 +171,14 @@ for (;;)
 
   osDelay (10);
   }
+}
+
+
+void HAL_UART_RxCpltCallback (UART_HandleTypeDef *huart)
+{
+	if (huart == gps_gethuart()) {
+		GPS_RxCpltCallback ();
+	} else if (huart == ab_gethuart()) {
+		AB_RxCpltCallback();
+	}
 }

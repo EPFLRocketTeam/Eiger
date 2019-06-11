@@ -34,6 +34,9 @@ typedef struct
 #define DATA_ID_GPS_ALTITUDE 10
 #define DATA_ID_GPS_SATS     11
 
+#define DATA_ID_AB_STATE   16
+#define DATA_ID_AB_INC     17
+
 #define DATA_ID_KALMAN_X     40
 #define DATA_ID_KALMAN_Y     41
 #define DATA_ID_KALMAN_Z     42

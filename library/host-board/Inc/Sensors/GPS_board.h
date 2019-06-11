@@ -18,6 +18,9 @@ extern "C"
 void gps_init(UART_HandleTypeDef *gpsHuart);
 void TK_GPS_board(void const * argument);
 
+void GPS_RxCpltCallback ();
+UART_HandleTypeDef* gps_gethuart();
+
 #ifdef __cplusplus
 }
 #endif

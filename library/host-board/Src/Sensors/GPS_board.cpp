@@ -80,10 +80,6 @@ void GPS_RxCpltCallback ()
   lastGpsDmaStreamIndex = 0;
 }
 
-void HAL_UART_RxCpltCallback (UART_HandleTypeDef *huart)
-{
-  if (huart == gps_huart)
-  {
-	GPS_RxCpltCallback ();
-  }
+UART_HandleTypeDef* gps_gethuart() {
+	return gps_huart;
 }

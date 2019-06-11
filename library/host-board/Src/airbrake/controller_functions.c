@@ -7,6 +7,7 @@
 
 #include <stm32f4xx_hal.h>
 #include <string.h>
+#include <stdbool.h>
 #include "cmsis_os.h"
 #include "led.h"
 
@@ -18,10 +19,15 @@
 #define MIN_OPENING_DEG 0
 #define ANGLE_HELLOWORLD 1
 
+#define AB_RX_BUFFER_SIZE 64
+#define FRAME_SIZE
 
 UART_HandleTypeDef* airbrake_huart;
-//extern volatile float32_t airbrakes_angle;
+char abRxBuffer[AB_RX_BUFFER_SIZE] = {0};
+volatile uint32_t lastABDmaStreamIndex = 0, endABDmaStreamIndex = 0;
+volatile bool feedback_received = false;
 
+volatile int char_processed = 0;
 
 char command_string[10] = {0};
 
@@ -29,12 +35,55 @@ void ab_init(UART_HandleTypeDef *ab_huart) {
 	airbrake_huart = ab_huart;
 }
 
+void ab_rx_parse(char c) {
+	static char frame_buf[FRAME_SIZE] = {0};
+	static int frame_idx = 0;
+	static bool valid_frame = false;
+	char_processed++;
+
+	if (!feedback_received) { // still no response from AB
+		if (c=='\r' || c=='\n' ) {
+			valid_frame = true;
+			frame_idx = 0;
+		} else if (!valid_frame) {
+			// waiting for footer
+			// do nothing
+		} else { // valid frame, just process the character
+			frame_buf[frame_idx++] = c;
+
+			if (frame_idx==1) {
+				if (frame_buf[0] == 'O') { // recieved the first O of OK
+					feedback_received = true;
+				}
+			} else {
+				valid_frame = false;
+			}
+		}
+	} else { // already got a positive feedback
+		// do nothing
+	}
+}
+
+void AB_RxCpltCallback ()
+{
+  while (lastABDmaStreamIndex < AB_RX_BUFFER_SIZE)
+    {
+	  ab_rx_parse(abRxBuffer[lastABDmaStreamIndex++]);
+    }
+
+  endABDmaStreamIndex = 0;
+  lastABDmaStreamIndex = 0;
+}
+
+UART_HandleTypeDef* ab_gethuart() {
+	return airbrake_huart;
+}
+
 void transmit_command(char* command, int size)
 {
   static char command_buffer[64];
   strcpy(command_buffer, command);
-  HAL_UART_Transmit(airbrake_huart, (uint8_t*)command_buffer, size, 10);
-  osDelay(30);
+  HAL_UART_Transmit(airbrake_huart, (uint8_t*)command_buffer, size, 100);
 }
 
 
@@ -58,8 +107,9 @@ void motor_goto_position_inc (int position_inc)
   do_string_command ('L', 'A', position_inc);
   sprintf(command, "%s%s", command_string, "M\n");
   transmit_command(command, strlen(command));
-  // ADD DELAY HERE; THE PERIOD DEPENDS ON KALMAN FILTER FREQUENCY....
-  return;
+
+  can_setFrame(position_inc, DATA_ID_AB_INC, HAL_GetTick());
+  can_setFrame(feedback_received, DATA_ID_AB_STATE, HAL_GetTick());
 }
 
 void controller_test (void)
@@ -74,30 +124,30 @@ void controller_test (void)
 
 int aerobrakes_control_init (void)
 {
-	char message_motor[20] = {0};
+	HAL_UART_Receive_DMA (airbrake_huart, abRxBuffer, AB_RX_BUFFER_SIZE); // buffer in circ mode
+	char command[64];
 
-	int status;
-	HAL_UART_Receive(airbrake_huart, message_motor, 16, 100);
-	status = strcmp(message_motor, "FAULHABER CS-BX4");
-
-	if(status != 0)
-	{
-		return 0;
-	}
-
-
-	//led_set_rgb(255,0,0);
-  // TO CALL AT POWERING ON
-	char command[40];
 	do_string_command ('L', 'L', deg2inc (MAX_OPENING_DEG));
 	sprintf(command, "%s%s%s%s", "HO\n", "LL1\n", command_string, "APL1\n");
 	transmit_command(command, strlen(command));
 
-  // controller properties
-  sprintf(command, "%s%s%s%s%s%s%s", "POR10\n", "I50\n", "PP30\n", "PD3\n",
-      "LPC3000\n", "LCC3000\n", "EN\n");
-  transmit_command(command, 37);
-  return 1;
+	// controller properties
+	sprintf(command, "%s%s%s%s%s%s%s", "POR10\n", "I50\n", "PP30\n", "PD3\n",
+			"LPC3000\n", "LCC3000\n", "EN\n");
+	transmit_command(command, 37);
+
+
+	osDelay(100);
+	// check rx buffer content
+	endABDmaStreamIndex = AB_RX_BUFFER_SIZE - airbrake_huart->hdmarx->Instance->NDTR;
+	while (lastABDmaStreamIndex < endABDmaStreamIndex)
+	{
+		ab_rx_parse (abRxBuffer[lastABDmaStreamIndex++]);
+	}
+
+	can_setFrame(feedback_received, DATA_ID_AB_STATE, HAL_GetTick());
+
+	return feedback_received;
 }
 
 void full_open (void)
@@ -117,19 +167,14 @@ void full_close (void)
 
 void aerobrake_helloworld (void)
 {
-	int i=0;
-	for(i=0; i<5;i++)
+	for(int i=0; i<5;i++)
 	{
-		transmit_command("EN\n", 3);
-		led_set_rgb(0,0,255);
 		int angle_helloworld_inc = deg2inc(ANGLE_HELLOWORLD);
 		motor_goto_position_inc(angle_helloworld_inc);
 		osDelay(500);
 		full_close();
-		led_set_rgb(0,255,0);
+		osDelay(300);
 	}
-
-  return;
 }
 
 

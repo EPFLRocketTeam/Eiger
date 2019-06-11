@@ -27,4 +27,9 @@ void motor_goto_position_inc(int position_inc);
 void command_aerobrake_controller (float altitude, float speed);
 float angle_tab (float altitude, float speed);
 
+
+void AB_RxCpltCallback ();
+UART_HandleTypeDef* ab_gethuart();
+
+
 #endif /* AIRBRAKE_H_ */
