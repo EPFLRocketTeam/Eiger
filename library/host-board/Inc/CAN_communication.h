@@ -36,6 +36,8 @@ typedef struct
 
 #define DATA_ID_AB_STATE   16
 #define DATA_ID_AB_INC     17
+#define DATA_ID_AB_AIRSPEED 18
+#define DATA_ID_AB_ALT     19
 
 #define DATA_ID_KALMAN_X     40
 #define DATA_ID_KALMAN_Y     41

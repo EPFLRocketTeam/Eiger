@@ -3,6 +3,7 @@
 #include "Sensors/BNO055/bno055.h"
 #include "CAN_communication.h"
 #include "Misc/Common.h"
+#include "Misc/rocket_constants.h"
 #include "led.h"
 
 #include "stm32f4xx_hal.h"
@@ -17,8 +18,6 @@ int8_t init_bme();
 int8_t init_bno();
 int8_t fetch_bme();
 int8_t fetch_bno();
-
-inline float altitudeFromPressure(float pressure_hPa);
 
 int8_t stm32_i2c_read (uint8_t dev_id, uint8_t reg_addr, uint8_t *data, uint16_t len);
 int8_t stm32_i2c_write (uint8_t dev_id, uint8_t reg_addr, uint8_t *data, uint16_t len);
@@ -191,11 +190,6 @@ int8_t fetch_bno()
 	cntr = ++cntr < 10 ? cntr : 0;
 
 	return rslt;
-}
-
-inline float altitudeFromPressure(float pressure_hPa)
-{
-	return 44330 * (1.0 - pow (pressure_hPa / ADJUSTED_SEA_LEVEL_PRESSURE, 0.1903));
 }
 
 int8_t stm32_i2c_read (uint8_t dev_id, uint8_t reg_addr, uint8_t *data, uint16_t len)

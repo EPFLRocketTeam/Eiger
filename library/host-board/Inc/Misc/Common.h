@@ -16,12 +16,6 @@
 #include <stm32f4xx_hal.h>
 
 #define CIRC_BUFFER_SIZE 8
-#define CCMRAM __attribute__((section(".ccmram")))
-
-#define SIMULATION 0 // 0 production mode, 1 simulation mode
-#define NOSECONE
-
-#define ADJUSTED_SEA_LEVEL_PRESSURE 1018.6
 
 extern TIM_HandleTypeDef htim7;
 
@@ -44,11 +38,10 @@ volatile uint32_t LIFTOFF_TIME;
 volatile uint32_t currentImuSeqNumber;
 volatile uint32_t currentBaroSeqNumber;
 volatile uint32_t currentBaroTimestamp;
-volatile uint32_t currentPitotSeqNumber;
 
 
-extern IMU_data IMU_buffer[];
-extern BARO_data BARO_buffer[];
+extern IMU_data IMU_buffer[CIRC_BUFFER_SIZE]; // defined in CAN_handling.c
+extern BARO_data BARO_buffer[CIRC_BUFFER_SIZE];
 
 static inline IMU_data* getCurrentIMU_data ()
 {

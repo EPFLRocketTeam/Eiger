@@ -63,6 +63,7 @@
 #include "Telemetry/xbee.h"
 #include "Misc/Common.h"
 #include "Misc/data_handling.h"
+#include "Misc/state_machine.h"
 #include "airbrake/airbrake.h"
 #include "Sensors/sensor_board.h"
 #include "Sensors/GPS_board.h"
@@ -95,6 +96,8 @@ osThreadId task_GPSHandle;
 osThreadId xBeeTelemetryHandle;
 osThreadId canReaderHandle;
 osThreadId kalmanHandle;
+osThreadId rocketfsmHandle;
+osThreadId state_estimatorHandle;
 
 
 /* USER CODE END Variables */
@@ -168,6 +171,9 @@ void MX_FREERTOS_Init(void) {
   osThreadDef(task_AB, TK_ab_controller, osPriorityNormal, 0, 256);
   task_ABHandle = osThreadCreate(osThread(task_AB), NULL);
   ab_init(&huart6);
+
+  osThreadDef(state_estimator, TK_state_estimation, osPriorityNormal, 0, 256);
+  state_estimatorHandle = osThreadCreate(osThread(state_estimator), NULL);
 #endif
 
 #ifdef SDCARD
@@ -189,6 +195,11 @@ void MX_FREERTOS_Init(void) {
 #ifdef KALMAN
   osThreadDef(kalman, TK_kalman, osPriorityNormal, 0, 1024);
   kalmanHandle = osThreadCreate(osThread(kalman), NULL);
+#endif
+
+#ifdef ROCKET_FSM
+  osThreadDef(rocket_fsm, TK_state_machine, osPriorityNormal, 0, 256);
+  rocketfsmHandle = osThreadCreate(osThread(rocket_fsm), NULL);
 #endif
 
   /* USER CODE END RTOS_THREADS */

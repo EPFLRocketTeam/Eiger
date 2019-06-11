@@ -19,11 +19,16 @@ typedef float float32_t;
 #include "Telemetry/telemetry_handling.h"
 #include "airbrake/airbrake.h"
 #include "Sensors/GPS_board.h"
+#include "Sensors/sensor_board.h"
 #include "Misc/datastructs.h"
 #include "sd_card.h"
 #include "ekf/tiny_ekf.h"
+#include "Misc/Common.h"
 
 #define BUFFER_SIZE 128
+
+IMU_data IMU_buffer[CIRC_BUFFER_SIZE];
+BARO_data BARO_buffer[CIRC_BUFFER_SIZE];
 
 bool handleGPSData(GPS_data data) {
 #ifdef XBEE
@@ -40,30 +45,36 @@ bool handleIMUData(IMU_data data) {
 #ifdef XBEE
 	return telemetry_handleIMUData(data);
 #elif defined(KALMAN)
-	kalman_handleIMUData(data);
+	return kalman_handleIMUData(data);
+#else
+	IMU_buffer[(++currentImuSeqNumber) % CIRC_BUFFER_SIZE] = data;
 #endif
-	return false;
+	return true;
 }
 
 bool handleBaroData(BARO_data data) {
+	data.altitude = altitudeFromPressure(data.pressure);
 #ifdef XBEE
 	return telemetry_handleBaroData(data);
 #elif defined(KALMAN)
-	kalman_handleBaroData(data);
+	return kalman_handleBaroData(data);
+#else
+	BARO_buffer[(++currentBaroSeqNumber) % CIRC_BUFFER_SIZE] = data;
+	currentBaroTimestamp = HAL_GetTick();
 #endif
 	return false;
 }
 
 float can_getAltitude() {
-	return 0;
+	return altitude_estimate;
 }
 
 float can_getSpeed() {
-	return 0;
+	return air_speed_state_estimate;
 }
 
 uint8_t can_getState() {
-	return 0;
+	return currentState;
 }
 
 void sendSDcard(CAN_msg msg) {
@@ -145,6 +156,11 @@ for (;;)
 	case DATA_ID_GPS_SATS:
 	  gpsData.sats = ((uint8_t) ((int32_t) msg.data));
 	  new_gps = true;
+	  break;
+	case DATA_ID_STATE:
+#ifndef ROCKET_FSM
+		currentState = msg.data;
+#endif
 	  break;
 	}
   }
