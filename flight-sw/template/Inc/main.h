@@ -156,6 +156,7 @@ void Error_Handler(void);
 #ifdef MAIN_BOARD
 	#define GPS
 	#define KALMAN
+	#define CAN_LED
 #endif
 
 #ifdef BLACK_BOX_BOARD
@@ -168,11 +169,14 @@ void Error_Handler(void);
 #ifdef TELEMETRY_BOARD
 	#define SDCARD
 	#define XBEE
+	#define CAN_LED
 #endif
 
 #ifdef AIRBRAKE_BOARD
 	#define AB_CONTROL
+	#define ROCKET_FSM
 	#define SENSOR
+	#define CAN_LED
 #endif
 
 #ifdef DEBUG_BOARD

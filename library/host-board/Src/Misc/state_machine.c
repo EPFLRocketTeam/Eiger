@@ -108,8 +108,8 @@ void TK_state_machine (void const * argument)
 
                 if (baroCalibReadyTrig)
                   {
+                	can_setFrame((int32_t) (calib_initial_altitude*1000), 51, HAL_GetTick());
                     currentState = STATE_IDLE;
-
                   }
 
               }
@@ -288,14 +288,8 @@ void TK_state_machine (void const * argument)
           }
 
         case STATE_TOUCHDOWN:
-          {
-
-            for(;;) {
-                osDelay(2000);
-            }
-
+        	osDelay(2000);
             break;
-          }
         }
 
     }

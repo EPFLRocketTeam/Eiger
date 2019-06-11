@@ -50,6 +50,8 @@ float lat_init = 0;
 float lon_init = 0;
 
 bool kalman_handleGPSData(GPS_data gps) {
+	return false;
+	/*
 	if (!GPS_init) {
 		lat_init = gps.lat;
 		lon_init = gps.lon;
@@ -58,10 +60,11 @@ bool kalman_handleGPSData(GPS_data gps) {
 
 	zdata[0] = 0 * rad2deg(gps.lat-lat_init) * earth_radius; // x gps
 	zdata[1] = 0 * rad2deg(gps.lon-lon_init) * earth_radius / cos(rad2deg(lat_init)); // y gps
-	zdata[2] = gps.altitude; // z gps
+	zdata[2] = 0 * gps.altitude; // z gps
 	zdata[3] = zdata[2]; // z baro...
 	GPS_avail = true;
 	return true;
+	*/
 }
 
 bool kalman_handleIMUData(IMU_data imu) {
@@ -76,6 +79,7 @@ bool kalman_handleIMUData(IMU_data imu) {
 }
 
 bool kalman_handleBaroData(BARO_data data) {
+	zdata[3] = data.altitude;
 	return true;
 }
 
@@ -136,7 +140,7 @@ void TK_kalman() {
 	uint32_t start_time = 0;
 	uint32_t now = 0;
 	uint32_t iter = 0;
-
+	uint8_t state = can_getState();
 
 
 	int j, k;
@@ -150,6 +154,8 @@ void TK_kalman() {
 	start_time = HAL_GetTick();
 
 	while (1) {
+		state = can_getState();
+
 		if (IMU_avail == 1) {
 			IMU_avail = 0;
 			//getting the data of the captor in the mapping frame IMUb to IMUm
@@ -209,7 +215,7 @@ void TK_kalman() {
 			ekf.hx[2] = ekf.fx[2];
 			ekf.hx[3] = ekf.fx[2];
 
-			if (GPS_init && (iter%5) == 0) { // go for the kalman
+			if (GPS_init && GPS_avail && (iter%1) == 0) { // go for the kalman
 				GPS_avail = false;
 				//fill H
 				ekf.H[0][0] = 1;
@@ -226,7 +232,7 @@ void TK_kalman() {
 				ekf.H[0][0] = 0;
 				ekf.H[1][1] = 0;
 				ekf.H[2][2] = 0;
-				ekf.H[3][2] = 1;
+				ekf.H[3][2] = 1; // includes baro
 			}
 
 			ekf_step(&ekf, zdata);
@@ -243,7 +249,9 @@ void TK_kalman() {
 			can_setFrame((int32_t) (180 / 3.14 * ekf.x[6]), DATA_ID_KALMAN_ROLL, HAL_GetTick());
 			can_setFrame((int32_t) (180 / 3.14 * ekf.x[7]), DATA_ID_KALMAN_PITCH, HAL_GetTick());
 			can_setFrame((int32_t) (180 / 3.14 * ekf.x[8]), DATA_ID_KALMAN_YAW, HAL_GetTick());
-
+			ekf.x[6] = 0; // force orientation pointing up
+			ekf.x[7] = 0;
+			ekf.x[8] = 0;
 		}
 		else {
 			// no IMU data available :sadface:

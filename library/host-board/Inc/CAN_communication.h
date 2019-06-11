@@ -10,6 +10,7 @@
 
 #include "stm32f4xx_hal.h"
 #include <string.h>
+#include "CAN_handling.h"
 
 typedef struct
 {

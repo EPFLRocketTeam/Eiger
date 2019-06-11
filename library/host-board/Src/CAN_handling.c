@@ -30,6 +30,9 @@ typedef float float32_t;
 IMU_data IMU_buffer[CIRC_BUFFER_SIZE];
 BARO_data BARO_buffer[CIRC_BUFFER_SIZE];
 
+float kalman_z  = 0;
+float kalman_vz = 0;
+
 bool handleGPSData(GPS_data data) {
 #ifdef XBEE
 	return telemetry_handleGPSData(data);
@@ -66,11 +69,13 @@ bool handleBaroData(BARO_data data) {
 }
 
 float can_getAltitude() {
-	return altitude_estimate;
+	//return altitude_estimate;
+	return kalman_z - calib_initial_altitude;
 }
 
 float can_getSpeed() {
-	return air_speed_state_estimate;
+	//return air_speed_state_estimate;
+	return kalman_vz;
 }
 
 uint8_t can_getState() {
@@ -162,6 +167,12 @@ for (;;)
 		currentState = msg.data;
 #endif
 	  break;
+	case DATA_ID_KALMAN_Z:
+		kalman_z = ((float32_t) ((int32_t) msg.data))/1e3;
+		break;
+	case DATA_ID_KALMAN_VZ:
+		kalman_vz = ((float32_t) ((int32_t) msg.data))/1e3;
+		break;
 	}
   }
 
