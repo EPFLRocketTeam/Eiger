@@ -53,9 +53,9 @@ Telemetry_Message createTelemetryDatagram (IMU_data* imu_data, BARO_data* baro_d
   builder.write32<float32_t> (imu_data->acceleration.y);
   builder.write32<float32_t> (imu_data->acceleration.z);
 
-  builder.write32<float32_t> (imu_data->eulerAngles.x); // flight status
+  builder.write32<float32_t> (imu_data->eulerAngles.x); // flight status + GPS fix information
   builder.write32<float32_t> (imu_data->eulerAngles.y); // AB_angle
-  builder.write32<float32_t> (imu_data->eulerAngles.z); // pitot_press
+  builder.write32<float32_t> (imu_data->eulerAngles.z); // battery voltage
 
   builder.write32<float32_t> (baro_data->temperature);
   builder.write32<float32_t> (baro_data->pressure);

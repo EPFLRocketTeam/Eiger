@@ -10,6 +10,7 @@
 #include "FreeRTOS.h"
 #include "led.h"
 #include <Telemetry/xbee.h>
+#include <Telemetry/telemetry_handling.h>
 
 osMessageQId xBeeQueueHandle;
 osSemaphoreId xBeeTxBufferSemHandle;
@@ -18,6 +19,7 @@ UART_HandleTypeDef* xBee_huart;
 
 // UART settings
 #define XBEE_UART_TIMEOUT 30
+#define XBEE_SEND_FRAME_LONG_TIMEOUT_MS 1000
 
 // XBee API mode
 #define XBEE_START 0x7e
@@ -73,6 +75,9 @@ void TK_xBeeTelemetry (const void* args)
         {
           sendXbeeFrame();
           packetStartTime = HAL_GetTick();
+        } else if (currentXbeeTxBufPos==0 && elapsed > XBEE_SEND_FRAME_LONG_TIMEOUT_MS) {
+        	// force dummy frame creation
+        	telemetry_handleIMUData((IMU_data) {{1,1,1}, {0,0,0}, 0});
         }
       osEvent event;
       do {
