@@ -21,36 +21,38 @@ typedef struct
 } CAN_msg;
 
 // Define all the data ID's
-#define DATA_ID_PRESSURE 0
-#define DATA_ID_ACCELERATION_X 1
-#define DATA_ID_ACCELERATION_Y 2
-#define DATA_ID_ACCELERATION_Z 3
-#define DATA_ID_GYRO_X 4
-#define DATA_ID_GYRO_Y 5
-#define DATA_ID_GYRO_Z 6
+#define DATA_ID_PRESSURE 0 // Pa
+#define DATA_ID_ACCELERATION_X 1 // milli-g
+#define DATA_ID_ACCELERATION_Y 2 // milli-g
+#define DATA_ID_ACCELERATION_Z 3 // milli-g
+#define DATA_ID_GYRO_X 4 // mrps
+#define DATA_ID_GYRO_Y 5 // mrps
+#define DATA_ID_GYRO_Z 6 // mrps
 
-#define DATA_ID_GPS_HDOP      7
-#define DATA_ID_GPS_LAT       8
-#define DATA_ID_GPS_LONG      9
-#define DATA_ID_GPS_ALTITUDE 10
-#define DATA_ID_GPS_SATS     11
+#define DATA_ID_GPS_HDOP      7 // mm
+#define DATA_ID_GPS_LAT       8 // udeg
+#define DATA_ID_GPS_LONG      9 // udeg
+#define DATA_ID_GPS_ALTITUDE 10 // cm
+#define DATA_ID_GPS_SATS     11 // #
 
-#define DATA_ID_AB_STATE   16
-#define DATA_ID_AB_INC     17
-#define DATA_ID_AB_AIRSPEED 18
-#define DATA_ID_AB_ALT     19
+#define DATA_ID_TEMPERATURE 12 // ???
 
-#define DATA_ID_KALMAN_X     40
-#define DATA_ID_KALMAN_Y     41
-#define DATA_ID_KALMAN_Z     42
-#define DATA_ID_KALMAN_VX    43
-#define DATA_ID_KALMAN_VY    44
-#define DATA_ID_KALMAN_VZ    45
-#define DATA_ID_KALMAN_YAW   46
-#define DATA_ID_KALMAN_PITCH 47
-#define DATA_ID_KALMAN_ROLL  48
+#define DATA_ID_AB_STATE   16 // enum
+#define DATA_ID_AB_INC     17 // [-]
+#define DATA_ID_AB_AIRSPEED 18 // mm/s
+#define DATA_ID_AB_ALT     19 // m
 
-#define DATA_ID_STATE 50
+#define DATA_ID_KALMAN_X     40 // m
+#define DATA_ID_KALMAN_Y     41 // m
+#define DATA_ID_KALMAN_Z     42 // m
+#define DATA_ID_KALMAN_VX    43 // mm/s
+#define DATA_ID_KALMAN_VY    44 // mm/s
+#define DATA_ID_KALMAN_VZ    45 // mm/s
+#define DATA_ID_KALMAN_YAW   46 // mrad
+#define DATA_ID_KALMAN_PITCH 47 // mrad
+#define DATA_ID_KALMAN_ROLL  48 // mrad
+
+#define DATA_ID_STATE 50 // enum
 
 
 
