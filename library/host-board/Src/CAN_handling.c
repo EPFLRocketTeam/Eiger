@@ -69,12 +69,12 @@ bool handleBaroData(BARO_data data) {
 }
 
 float can_getAltitude() {
-	//return altitude_estimate;
+	//return altitude_estimate; // from TK_state_estimation
 	return kalman_z - calib_initial_altitude;
 }
 
 float can_getSpeed() {
-	//return air_speed_state_estimate;
+	//return air_speed_state_estimate; // from TK_state_estimation
 	return kalman_vz;
 }
 

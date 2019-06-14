@@ -15,7 +15,7 @@
 
 
 
-#define MAX_OPENING_DEG 66
+#define MAX_OPENING_DEG 66 // todo: check this value, and thus the deg2inc cmd
 #define MIN_OPENING_DEG 0
 #define ANGLE_HELLOWORLD 1
 
