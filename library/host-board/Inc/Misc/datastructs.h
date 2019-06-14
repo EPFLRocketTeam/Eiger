@@ -44,10 +44,10 @@ typedef struct
 
 typedef struct
 {
-  float32_t hdop;
-  float32_t lat;
-  float32_t lon;
-  int32_t altitude;
+  float32_t hdop; // m
+  float32_t lat; // deg
+  float32_t lon; // deg
+  int32_t altitude; // cm
   uint8_t sats;
 } GPS_data;
 

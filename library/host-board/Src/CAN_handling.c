@@ -27,11 +27,23 @@ typedef float float32_t;
 
 #define BUFFER_SIZE 128
 
+#define GPS_DEFAULT (-1.0)
+
 IMU_data IMU_buffer[CIRC_BUFFER_SIZE];
 BARO_data BARO_buffer[CIRC_BUFFER_SIZE];
 
 float kalman_z  = 0;
 float kalman_vz = 0;
+
+// wrapper to avoid fatal crashes when implementing redundancy
+int board2Idx(uint32_t board) {
+	if (board < MAX_BOARD_ID) {
+		return board;
+	}  else { // invalid board ID
+		// to avoid fatal crash return a default value
+		return MAX_BOARD_ID;
+	}
+}
 
 bool handleGPSData(GPS_data data) {
 #ifdef XBEE
@@ -99,108 +111,126 @@ void sendSDcard(CAN_msg msg) {
 }
 
 void TK_can_reader() {
-// init
-IMU_data  imu  = {{0,0,0},{0,0,0}, 0};
-BARO_data baro = {0,0,0};
-GPS_data gpsData = {0, 0, 0, 0, 0};
-CAN_msg msg;
+	// init
+	CAN_msg msg;
 
-bool new_baro = 0;
-bool new_imu = 0;
-bool new_gps = 0;
+	IMU_data  imu [MAX_BOARD_NUMBER] = {0};
+	BARO_data baro[MAX_BOARD_NUMBER] = {0};
+	GPS_data  gps [MAX_BOARD_NUMBER] = {0};
+	int total_gps_fixes = 0;
+	bool gps_fix [MAX_BOARD_NUMBER] = {0};
+	bool new_baro[MAX_BOARD_NUMBER] = {0};
+	bool new_imu [MAX_BOARD_NUMBER] = {0};
+	bool new_gps [MAX_BOARD_NUMBER] = {0};
+	int idx = 0;
 
-osDelay (500); // Wait for the other threads to be ready
+	osDelay (500); // Wait for the other threads to be ready
 
-baro.temperature = 20;
-
-for (;;)
-{
-  while (can_msgPending()) { // check if new data
-	msg = can_readBuffer();
-	// add to SD card
-	#ifdef SDCARD
-	sendSDcard(msg);
-	#endif
-
-	switch(msg.id) {
-	case DATA_ID_PRESSURE:
-	  baro.pressure = ((float32_t) ((int32_t) msg.data)) / 100; // convert from cPa to hPa
-	  break;
-	case DATA_ID_TEMPERATURE:
-	  baro.pressure = ((float32_t) ((int32_t) msg.data)) / 1; // keep to ??? in C
-	  new_baro = true; // only update when we get the pressure
-	  break;
-	case DATA_ID_ACCELERATION_X:
-	  imu.acceleration.x = ((float32_t) ((int32_t) msg.data)) / 1000; // convert from m-g to g
-	  break;
-	case DATA_ID_ACCELERATION_Y:
-	  imu.acceleration.y = ((float32_t) ((int32_t) msg.data)) / 1000;
-	  break;
-	case DATA_ID_ACCELERATION_Z:
-	  imu.acceleration.z = ((float32_t) ((int32_t) msg.data)) / 1000;
-	  new_imu = true;  // only update when we get IMU from Z
-	  break;
-	case DATA_ID_GYRO_X:
-	  imu.eulerAngles.x = ((float32_t) ((int32_t) msg.data)); // convert from mrps
-	  break;
-	case DATA_ID_GYRO_Y:
-	  imu.eulerAngles.y = ((float32_t) ((int32_t) msg.data));
-	  break;
-	case DATA_ID_GYRO_Z:
-	  imu.eulerAngles.z = ((float32_t) ((int32_t) msg.data));
-	  break;
-	case DATA_ID_GPS_HDOP:
-	  gpsData.hdop = ((float32_t) ((int32_t) msg.data)) / 1e3; // from mm to m
-	  break;
-	case DATA_ID_GPS_LAT:
-	  gpsData.lat = ((float32_t) ((int32_t) msg.data))  / 1e6; // from udeg to deg
-	  break;
-	case DATA_ID_GPS_LONG:
-	  gpsData.lon = ((float32_t) ((int32_t) msg.data))  / 1e6; // from udeg to deg
-	  break;
-	case DATA_ID_GPS_ALTITUDE:
-	  gpsData.altitude = ((int32_t) msg.data) / 100; // from cm to m
-	  break;
-	case DATA_ID_GPS_SATS:
-	  gpsData.sats = ((uint8_t) ((int32_t) msg.data));
-	  new_gps = true;
-	  break;
-	case DATA_ID_STATE:
-#ifndef ROCKET_FSM
-		currentState = msg.data;
+	for (;;)
+	{
+		while (can_msgPending()) { // check if new data
+			msg = can_readBuffer();
+			// add to SD card
+#ifdef SDCARD
+			sendSDcard(msg);
 #endif
-	  break;
-	case DATA_ID_KALMAN_Z:
-		kalman_z = ((float32_t) ((int32_t) msg.data))/1e3;
-		break;
-	case DATA_ID_KALMAN_VZ:
-		kalman_vz = ((float32_t) ((int32_t) msg.data))/1e3;
-		break;
+			idx = board2Idx(msg.id);
+
+			switch(msg.id) {
+			case DATA_ID_PRESSURE:
+				baro[idx].pressure = ((float32_t) ((int32_t) msg.data)) / 100; // convert from cPa to hPa
+				break;
+			case DATA_ID_TEMPERATURE:
+				baro[idx].pressure = ((float32_t) ((int32_t) msg.data)) / 1; // from to ??? in C
+				new_baro[idx] = true; // only update when we get the pressure
+				break;
+			case DATA_ID_ACCELERATION_X:
+				imu[idx].acceleration.x = ((float32_t) ((int32_t) msg.data)) / 1000; // convert from m-g to g
+				break;
+			case DATA_ID_ACCELERATION_Y:
+				imu[idx].acceleration.y = ((float32_t) ((int32_t) msg.data)) / 1000;
+				break;
+			case DATA_ID_ACCELERATION_Z:
+				imu[idx].acceleration.z = ((float32_t) ((int32_t) msg.data)) / 1000;
+				new_imu[idx] = true;  // only update when we get IMU from Z
+				break;
+			case DATA_ID_GYRO_X:
+				imu[idx].eulerAngles.x = ((float32_t) ((int32_t) msg.data)); // convert from mrps to ???
+				break;
+			case DATA_ID_GYRO_Y:
+				imu[idx].eulerAngles.y = ((float32_t) ((int32_t) msg.data));
+				break;
+			case DATA_ID_GYRO_Z:
+				imu[idx].eulerAngles.z = ((float32_t) ((int32_t) msg.data));
+				break;
+			case DATA_ID_GPS_HDOP:
+				gps[idx].hdop = ((float32_t) ((int32_t) msg.data)) / 1e3; // from mm to m
+				if (!gps_fix[idx]) {
+					gps_fix[idx] = true;
+					total_gps_fixes++;
+				}
+				break;
+			case DATA_ID_GPS_LAT:
+				gps[idx].lat = ((float32_t) ((int32_t) msg.data))  / 1e6; // from udeg to deg
+				break;
+			case DATA_ID_GPS_LONG:
+				gps[idx].lon = ((float32_t) ((int32_t) msg.data))  / 1e6; // from udeg to deg
+				break;
+			case DATA_ID_GPS_ALTITUDE:
+				gps[idx].altitude = ((int32_t) msg.data) / 1; // keep in cm
+				break;
+			case DATA_ID_GPS_SATS:
+				gps[idx].sats = ((uint8_t) ((int32_t) msg.data));
+				new_gps[idx] = true;
+				break;
+			case DATA_ID_STATE:
+#ifndef ROCKET_FSM // to avoid self loop on board with FSM
+				currentState = msg.data;
+#endif
+				break;
+			case DATA_ID_KALMAN_Z:
+				kalman_z = ((float32_t) ((int32_t) msg.data))/1e3;
+				break;
+			case DATA_ID_KALMAN_VZ:
+				kalman_vz = ((float32_t) ((int32_t) msg.data))/1e3;
+				break;
+			}
+		}
+
+		// check if new/non-handled full sensor packets are present
+		for (int i=0; i<MAX_BOARD_NUMBER ; i++) {
+			if (new_gps[i]) {
+				// check if the new gps data has a fix
+				if (gps[i].altitude == GPS_DEFAULT) { // will make some launch locations impossible (depending on the default value the altitude might be valid)
+					if (gps_fix[i]) { // todo: implement timeout on gps_fix if no message received for extended time
+						total_gps_fixes--;
+						gps_fix[i] = false;
+					}
+				}
+
+				if (gps_fix[i] || total_gps_fixes<1) { // filter packets
+					// only allow packets without fix if there exist globally no gps fixes
+					if (handleGPSData(gps[i])) { // handle packet
+						// reset all the data
+						gps[i].hdop     = GPS_DEFAULT;
+						gps[i].lat      = GPS_DEFAULT;
+						gps[i].lon      = GPS_DEFAULT;
+						gps[i].altitude = GPS_DEFAULT;
+						gps[i].sats     = (uint8_t) GPS_DEFAULT;
+						new_gps[i] = false;
+					}
+				}
+			}
+			if (new_baro[i]) {
+				new_baro[i] = !handleBaroData(baro[i]);
+			}
+			if (new_imu[i]) {
+				new_imu[i] = !handleIMUData(imu[i]);
+			}
+		}
+
+		osDelay (10);
 	}
-  }
-
-  if (new_gps) {
-	  if (handleGPSData(gpsData)) { // handle packet
-		  // reset all the data
-		  gpsData.hdop     = 0xffffffff;
-		  gpsData.lat      = 0xffffffff;
-		  gpsData.lon      = 0xffffffff;
-		  gpsData.altitude = 0;
-		  gpsData.sats     = 0;
-		  new_gps = false;
-	  }
-  }
-
-  if (new_baro) {
-	  new_baro = !handleBaroData(baro);
-  }
-
-  if (new_imu) {
-	  new_imu = !handleIMUData(imu);
-  }
-
-  osDelay (10);
-  }
 }
 
 

@@ -60,7 +60,7 @@ bool kalman_handleGPSData(GPS_data gps) {
 
 	zdata[0] = 0 * rad2deg(gps.lat-lat_init) * earth_radius; // x gps
 	zdata[1] = 0 * rad2deg(gps.lon-lon_init) * earth_radius / cos(rad2deg(lat_init)); // y gps
-	zdata[2] = 0 * gps.altitude; // z gps
+	zdata[2] = 0 * ((float) gps.altitude)/100; // z gps, from cm to m
 	zdata[3] = zdata[2]; // z baro...
 	GPS_avail = true;
 	return true;

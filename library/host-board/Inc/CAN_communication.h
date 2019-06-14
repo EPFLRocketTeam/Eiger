@@ -62,9 +62,11 @@ typedef struct
 #define CAN_ID_BLACK_BOX_BOARD 1
 #define CAN_ID_TELEMETRY_BOARD 2
 #define CAN_ID_AIBRAKE_BOARD 3
-#define CAN_ID_DEBUG_BOARD 9
-#define CAN_ID_DEFAULT 10
+#define CAN_ID_DEBUG_BOARD 6
+#define CAN_ID_DEFAULT 7
 
+#define MAX_BOARD_ID 7 // used to implement redundant info in CAN_handling
+#define MAX_BOARD_NUMBER (MAX_BOARD_ID+1)
 
 void CAN_Config(uint32_t id);
 void can_setFrame(uint32_t data, uint8_t data_id, uint32_t timestamp);
