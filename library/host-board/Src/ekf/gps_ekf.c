@@ -137,10 +137,10 @@ void TK_kalman() {
 	float dt = ((float) EKF_PERIOD_MS)/1e3; // fix at 10 Hz
 	double sp, sr, sy, cp, cr, cy;
 
-	uint32_t start_time = 0;
-	uint32_t now = 0;
+	uint32_t start_time=0, now=0, t_wait=0;
 	uint32_t iter = 0;
-	uint8_t state = can_getState();
+	uint8_t rocket_state = can_getState();
+	enum Kalman_state kalman_state = KALMAN_INIT;
 
 
 	int j, k;
@@ -153,8 +153,9 @@ void TK_kalman() {
 
 	start_time = HAL_GetTick();
 
+
 	while (1) {
-		state = can_getState();
+		rocket_state = can_getState();
 
 		if (IMU_avail == 1) {
 			IMU_avail = 0;
@@ -255,11 +256,20 @@ void TK_kalman() {
 		}
 		else {
 			// no IMU data available :sadface:
+			kalman_state = KALMAN_NO_IMU;
 		}
 
 		// ensure periodicity
 		now = HAL_GetTick();
-		osDelay(EKF_PERIOD_MS - (now-start_time));
-		start_time += EKF_PERIOD_MS;
+		t_wait = EKF_PERIOD_MS - (now-start_time);
+		if (t_wait>0) {
+			if (kalman_state != KALMAN_NO_IMU) kalman_state = KALMAN_OK;
+			osDelay(t_wait);
+			start_time += EKF_PERIOD_MS;
+		} else {
+			kalman_state = KALMAN_OVERRUN;
+			start_time = now; // skipped a tick
+		}
+		can_setFrame(kalman_state, DATA_ID_KALMAN_STATE, HAL_GetTick());
 	}
 }

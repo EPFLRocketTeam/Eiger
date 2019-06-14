@@ -42,6 +42,7 @@ typedef struct
 #define DATA_ID_AB_AIRSPEED 18 // mm/s
 #define DATA_ID_AB_ALT     19 // m
 
+#define DATA_ID_KALMAN_STATE 38 // enum
 #define DATA_ID_KALMAN_X     40 // m
 #define DATA_ID_KALMAN_Y     41 // m
 #define DATA_ID_KALMAN_Z     42 // m

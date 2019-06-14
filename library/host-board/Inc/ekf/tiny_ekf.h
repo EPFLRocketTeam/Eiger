@@ -52,6 +52,10 @@
     * </pre>
   */
 
+enum Kalman_state {
+	KALMAN_INIT=0, KALMAN_OK, KALMAN_OVERRUN, KALMAN_NO_IMU
+}; // todo: implement bitmask instead of enum
+
 void mat_exp(float F[9][9], float PHI[9][9], int n);
 
 void updateP(float Pmatrix[9][9], float F[9][9], float Q[9][9]);
