@@ -146,6 +146,7 @@ int8_t fetch_bme()
 	if (!rslt)
 	{
 		can_setFrame(bme_data.pressure/100, DATA_ID_PRESSURE, HAL_GetTick());
+		can_setFrame(bme_data.temperature, DATA_ID_TEMPERATURE, HAL_GetTick());
 		if(!cntr)
 		{
 			sprintf(buf, "Pres: %"PRIu32"\nTemp: %"PRIu32"\nHum: %"PRIu32"\n",

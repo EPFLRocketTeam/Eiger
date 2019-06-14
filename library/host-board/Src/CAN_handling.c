@@ -125,7 +125,10 @@ for (;;)
 	switch(msg.id) {
 	case DATA_ID_PRESSURE:
 	  baro.pressure = ((float32_t) ((int32_t) msg.data)) / 100; // convert from cPa to hPa
-	  new_baro = true;
+	  break;
+	case DATA_ID_TEMPERATURE:
+	  baro.pressure = ((float32_t) ((int32_t) msg.data)) / 1; // keep to ??? in C
+	  new_baro = true; // only update when we get the pressure
 	  break;
 	case DATA_ID_ACCELERATION_X:
 	  imu.acceleration.x = ((float32_t) ((int32_t) msg.data)) / 1000; // convert from m-g to g
