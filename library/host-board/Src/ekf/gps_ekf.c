@@ -159,6 +159,7 @@ void TK_kalman() {
 
 		if (IMU_avail == 1) {
 			IMU_avail = 0;
+			kalman_state = KALMAN_OK;
 			//getting the data of the captor in the mapping frame IMUb to IMUm
 			sr = sin(ekf.x[6]); //roll
 			sp = sin(ekf.x[7]); //pitch
@@ -253,8 +254,7 @@ void TK_kalman() {
 			ekf.x[6] = 0; // force orientation pointing up
 			ekf.x[7] = 0;
 			ekf.x[8] = 0;
-		}
-		else {
+		} else {
 			// no IMU data available :sadface:
 			kalman_state = KALMAN_NO_IMU;
 		}

@@ -33,9 +33,9 @@ void send_gps_data() {
 		float lon  = gpsParser.location.isValid () ? gpsParser.location.lng () : 0xffffffff;
 		int32_t altitude = gpsParser.altitude.isValid () ? gpsParser.altitude.value () : 0;
 
-		can_setFrame((int32_t)(1e3)*hdop, DATA_ID_GPS_HDOP, HAL_GetTick());
-		can_setFrame((int32_t)(1e6)*lat, DATA_ID_GPS_LAT, HAL_GetTick());
-		can_setFrame((int32_t)(1e6)*lon, DATA_ID_GPS_LONG, HAL_GetTick());
+		can_setFrame((int32_t)((1e3)*hdop), DATA_ID_GPS_HDOP, HAL_GetTick());
+		can_setFrame((int32_t)((1e6)*lat), DATA_ID_GPS_LAT, HAL_GetTick());
+		can_setFrame((int32_t)((1e6)*lon), DATA_ID_GPS_LONG, HAL_GetTick());
 		can_setFrame((int32_t)altitude, DATA_ID_GPS_ALTITUDE, HAL_GetTick());
 		led_set_TK_rgb(led_gps_id, 0, 150, 0);
 	} else if( gpsParser.satellites.isValid ()){

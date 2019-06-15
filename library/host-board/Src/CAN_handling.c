@@ -141,7 +141,7 @@ void TK_can_reader() {
 				baro[idx].pressure = ((float32_t) ((int32_t) msg.data)) / 100; // convert from cPa to hPa
 				break;
 			case DATA_ID_TEMPERATURE:
-				baro[idx].pressure = ((float32_t) ((int32_t) msg.data)) / 1; // from to ??? in C
+				baro[idx].temperature = ((float32_t) ((int32_t) msg.data)) / 100; // from to cDegC in DegC
 				new_baro[idx] = true; // only update when we get the pressure
 				break;
 			case DATA_ID_ACCELERATION_X:
