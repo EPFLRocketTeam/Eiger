@@ -29,6 +29,7 @@ void TK_ab_controller (void const * argument)
   uint32_t now = 0;
   currentState = STATE_CALIBRATION;
 
+
   osDelay (2000);
 
   led_AB_id = led_register_TK();

@@ -145,8 +145,8 @@ int8_t fetch_bme()
 	rslt = bme280_get_sensor_data(BME280_ALL, &bme_data, &bme);
 	if (!rslt)
 	{
-		can_setFrame(bme_data.pressure/100, DATA_ID_PRESSURE, HAL_GetTick());
 		can_setFrame(bme_data.temperature, DATA_ID_TEMPERATURE, HAL_GetTick());
+		can_setFrame(bme_data.pressure/100, DATA_ID_PRESSURE, HAL_GetTick());
 		if(!cntr)
 		{
 			sprintf(buf, "Pres: %"PRIu32"\nTemp: %"PRIu32"\nHum: %"PRIu32"\n",

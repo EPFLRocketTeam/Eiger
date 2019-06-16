@@ -134,15 +134,15 @@ void TK_can_reader() {
 #ifdef SDCARD
 			sendSDcard(msg);
 #endif
-			idx = board2Idx(msg.id);
+			idx = board2Idx(msg.id_CAN);
 
 			switch(msg.id) {
 			case DATA_ID_PRESSURE:
 				baro[idx].pressure = ((float32_t) ((int32_t) msg.data)) / 100; // convert from cPa to hPa
+				new_baro[idx] = true; // only update when we get the pressure
 				break;
 			case DATA_ID_TEMPERATURE:
 				baro[idx].temperature = ((float32_t) ((int32_t) msg.data)) / 100; // from to cDegC in DegC
-				new_baro[idx] = true; // only update when we get the pressure
 				break;
 			case DATA_ID_ACCELERATION_X:
 				imu[idx].acceleration.x = ((float32_t) ((int32_t) msg.data)) / 1000; // convert from m-g to g

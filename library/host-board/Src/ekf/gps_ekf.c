@@ -50,7 +50,6 @@ float lat_init = 0;
 float lon_init = 0;
 
 bool kalman_handleGPSData(GPS_data gps) {
-	return false;
 	/*
 	if (!GPS_init) {
 		lat_init = gps.lat;
@@ -63,8 +62,8 @@ bool kalman_handleGPSData(GPS_data gps) {
 	zdata[2] = 0 * ((float) gps.altitude)/100; // z gps, from cm to m
 	zdata[3] = zdata[2]; // z baro...
 	GPS_avail = true;
-	return true;
 	*/
+	return true;
 }
 
 bool kalman_handleIMUData(IMU_data imu) {

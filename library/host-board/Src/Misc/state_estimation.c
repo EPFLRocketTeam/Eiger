@@ -69,8 +69,8 @@ void TK_state_estimation ()
       altitude_estimate = sum / ALTITUDE_BUFFER_SIZE;
       air_speed_state_estimate = d_h / d_t;
 
-      can_setFrame((int32_t) altitude_estimate, DATA_ID_AB_ALT, HAL_GetTick());
-      can_setFrame((int32_t) (air_speed_state_estimate*1000), DATA_ID_AB_AIRSPEED, HAL_GetTick());
+      //can_setFrame((int32_t) altitude_estimate, DATA_ID_AB_ALT, HAL_GetTick());
+      //can_setFrame((int32_t) (air_speed_state_estimate*1000), DATA_ID_AB_AIRSPEED, HAL_GetTick());
 
       osDelay (3);
     }
