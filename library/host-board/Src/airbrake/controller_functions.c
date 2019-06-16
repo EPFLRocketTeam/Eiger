@@ -15,9 +15,9 @@
 
 
 
-#define MAX_OPENING_DEG 66 // todo: check this value, and thus the deg2inc cmd
+#define MAX_OPENING_DEG 210 // deg
 #define MIN_OPENING_DEG 0
-#define ANGLE_HELLOWORLD 1
+#define ANGLE_HELLOWORLD 10
 
 #define AB_RX_BUFFER_SIZE 64
 #define FRAME_SIZE
@@ -90,7 +90,7 @@ void transmit_command(char* command, int size)
 int deg2inc(float degrees_angle)
 {
   //int inc = -(int) (degrees_angle * 75000 / 360); //3000 inc/evolution, 1:25reductor
-	int inc = -(int) ((degrees_angle * 38280) / 360); //3000 inc/evolution, 1:12.76reductor
+	int inc = -(int) ((degrees_angle * 11806) / 360); //3000 inc/evolution, 1:12.76reductor
   return inc;
 }
 
