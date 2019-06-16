@@ -7,7 +7,7 @@
 
 #define LED_TK_BREAK   100  // [ms] off time in between thread
 #define LED_TK_ON      300  // [ms] on time of each thread
-#define LED_LOOP_BREAK 500  // [ms] time in between each start of thread sequence
+#define LED_LOOP_BREAK 10000  // [ms] time in between each start of thread sequence
 #define LED_INIT_DELAY 1000 // [ms] initial time to display a solid color
 
 #define MAX_N_THREADS 10

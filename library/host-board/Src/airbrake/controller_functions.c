@@ -14,9 +14,10 @@
 
 
 
-#define MAX_OPENING_DEG 66
+//#define MAX_OPENING_DEG 66
+#define MAX_OPENING_DEG 210
 #define MIN_OPENING_DEG 0
-#define ANGLE_HELLOWORLD 1
+#define ANGLE_HELLOWORLD 5
 
 
 UART_HandleTypeDef* airbrake_huart;
@@ -41,7 +42,8 @@ void transmit_command(char* command, int size)
 int deg2inc(float degrees_angle)
 {
   //int inc = -(int) (degrees_angle * 75000 / 360); //3000 inc/evolution, 1:25reductor
-	int inc = -(int) ((degrees_angle * 38280) / 360); //3000 inc/evolution, 1:12.76reductor
+	//int inc = -(int) ((degrees_angle * 38280) / 360); //3000 inc/evolution, 1:12.76reductor
+	int inc = -(int) ((degrees_angle * 11806) / 360); //3000 inc/evolution, 1:12.76reductor
   return inc;
 }
 
@@ -76,13 +78,13 @@ int aerobrakes_control_init (void)
 {
 	char message_motor[20] = {0};
 
-	int status;
+	int status=0;
 	HAL_UART_Receive(airbrake_huart, message_motor, 16, 100);
 	status = strcmp(message_motor, "FAULHABER CS-BX4");
 
 	if(status != 0)
 	{
-		return 0;
+		//return 0;
 	}
 
 

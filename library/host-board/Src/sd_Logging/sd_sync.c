@@ -82,7 +82,7 @@ void TK_sd_sync (void const* pvArgs)
   if (initSdFile () != osOK)
     {
 	  while (1) {
-		  led_set_TK_rgb(led_sdcard_id, 50, 0, 0);
+		  led_set_TK_rgb(led_sdcard_id, 200, 0, 0);
 		  osDelay (1000);
 	  }
     }

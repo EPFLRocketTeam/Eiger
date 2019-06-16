@@ -39,6 +39,7 @@ void TK_ab_controller (void const * argument)
 	  	  case STATE_CALIBRATION:
 	  		  led_set_TK_rgb(led_AB_id, 200, 0, 80);
 
+
 	  		  // Wait for AB motor powered ON
 	  		  if(!aerobrakes_control_init())
 	  		  {
