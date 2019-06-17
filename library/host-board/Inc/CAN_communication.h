@@ -36,6 +36,7 @@ typedef struct
 #define DATA_ID_GPS_SATS     11 // #
 
 #define DATA_ID_TEMPERATURE 12 // cDegC
+#define DATA_ID_CALIB_PRESSURE 13 // Pa
 
 #define DATA_ID_AB_STATE   16 // enum
 #define DATA_ID_AB_INC     17 // [-]

@@ -11,8 +11,10 @@
 
 #include <inttypes.h>
 #include <math.h>
+#include <stdbool.h>
 
 #define I2C_TIMEOUT 3
+#define BARO_CALIB_N 128
 
 int8_t init_bme();
 int8_t init_bno();
@@ -30,6 +32,8 @@ char buf[300];
 //## BME280 ##
 struct bme280_dev bme;
 struct bme280_data bme_data;
+uint32_t bme_basepressure;
+uint32_t bme_calib_counter;
 
 //## BNO055 ##
 struct bno055_t bno055;
@@ -38,6 +42,8 @@ struct bno055_gyro_float_t gyro;
 struct bno055_mag_float_t mag;
 
 int led_sensor_id_imu, led_sensor_id_baro;
+
+bool bme_calibrated = false;
 
 int set_sensor_led(int id, int flag) {
 	if (flag) { // success
@@ -109,6 +115,10 @@ int8_t init_bme()
 
 	//Always set the power mode after setting the configuration
 	rslt = bme280_set_sensor_mode(BME280_NORMAL_MODE, &bme);
+
+	bme_calibrated = false;
+	bme_calib_counter = 0;
+	bme_basepressure = 0;
 	return rslt;
 }
 
@@ -145,6 +155,18 @@ int8_t fetch_bme()
 	rslt = bme280_get_sensor_data(BME280_ALL, &bme_data, &bme);
 	if (!rslt)
 	{
+		if (!bme_calibrated) {
+			bme_basepressure += bme_data.pressure/100;
+			bme_calib_counter++;
+
+			if (bme_calib_counter == BARO_CALIB_N) {
+				bme_basepressure /= BARO_CALIB_N;
+				bme_calibrated = true;
+			}
+		} else if (cntr==0) {
+			can_setFrame(bme_basepressure, DATA_ID_CALIB_PRESSURE, HAL_GetTick());
+		}
+
 		can_setFrame(bme_data.temperature, DATA_ID_TEMPERATURE, HAL_GetTick());
 		can_setFrame(bme_data.pressure/100, DATA_ID_PRESSURE, HAL_GetTick());
 		if(!cntr)
@@ -155,7 +177,7 @@ int8_t fetch_bme()
 		}
 	}
 
-	cntr = ++cntr < 10 ? cntr : 0;
+	cntr = ++cntr < 30 ? cntr : 0;
 
 	return rslt;
 }
