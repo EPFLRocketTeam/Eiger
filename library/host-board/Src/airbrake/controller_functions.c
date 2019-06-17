@@ -124,8 +124,8 @@ void controller_test (void)
 
 int aerobrakes_control_init (void)
 {
-	HAL_UART_Receive_DMA (airbrake_huart, abRxBuffer, AB_RX_BUFFER_SIZE); // buffer in circ mode
 	char command[64];
+	char buffer[64] = {0};
 
 	do_string_command ('L', 'L', deg2inc (MAX_OPENING_DEG));
 	sprintf(command, "%s%s%s%s", "HO\n", "LL1\n", command_string, "APL1\n");
@@ -136,14 +136,12 @@ int aerobrakes_control_init (void)
 			"LPC3000\n", "LCC3000\n", "EN\n");
 	transmit_command(command, 37);
 
+	// check rx buffer content
+	while (HAL_UART_Receive(airbrake_huart, buffer, 1, 100) == HAL_OK) {
+		ab_rx_parse (buffer[0]);
+	}
 
 	osDelay(100);
-	// check rx buffer content
-	endABDmaStreamIndex = AB_RX_BUFFER_SIZE - airbrake_huart->hdmarx->Instance->NDTR;
-	while (lastABDmaStreamIndex < endABDmaStreamIndex)
-	{
-		ab_rx_parse (abRxBuffer[lastABDmaStreamIndex++]);
-	}
 
 	can_setFrame(feedback_received, DATA_ID_AB_STATE, HAL_GetTick());
 

@@ -170,7 +170,7 @@ void MX_FREERTOS_Init(void) {
 #ifdef AB_CONTROL
   osThreadDef(task_AB, TK_ab_controller, osPriorityNormal, 0, 256);
   task_ABHandle = osThreadCreate(osThread(task_AB), NULL);
-  ab_init(&huart6);
+  ab_init(&huart1);
 
   osThreadDef(state_estimator, TK_state_estimation, osPriorityNormal, 0, 256);
   state_estimatorHandle = osThreadCreate(osThread(state_estimator), NULL);
