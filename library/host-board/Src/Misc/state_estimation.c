@@ -15,9 +15,9 @@ volatile float32_t air_speed_state_estimate, altitude_estimate;
 
 void TK_state_estimation ()
 {
-
   float32_t altitude_buffer[ALTITUDE_BUFFER_SIZE][2];
   uint8_t altitude_index = 0;
+  BARO_data baro;
 
   uint32_t lastBaroSeqNumber = 0;
 
@@ -26,18 +26,13 @@ void TK_state_estimation ()
       if (lastBaroSeqNumber < currentBaroSeqNumber)
         {
           altitude_index++;
-          altitude_buffer[altitude_index % ALTITUDE_BUFFER_SIZE][0] = BARO_buffer[currentBaroSeqNumber
-              % CIRC_BUFFER_SIZE].altitude;
+          baro = BARO_buffer[currentBaroSeqNumber % CIRC_BUFFER_SIZE];
+          altitude_buffer[altitude_index % ALTITUDE_BUFFER_SIZE][0] = baro.altitude - baro.base_altitude;
           altitude_buffer[altitude_index % ALTITUDE_BUFFER_SIZE][1] = currentBaroTimestamp;
           lastBaroSeqNumber = currentBaroSeqNumber;
         }
 
       osDelay (10);
-    }
-
-  for (int i = 0; i < ALTITUDE_BUFFER_SIZE; ++i)
-    {
-      altitude_buffer[i][0] -= calib_initial_altitude;
     }
 
   for (;;)
@@ -46,8 +41,8 @@ void TK_state_estimation ()
       if (lastBaroSeqNumber < currentBaroSeqNumber)
         {
           altitude_index++;
-          altitude_buffer[altitude_index % ALTITUDE_BUFFER_SIZE][0] = BARO_buffer[currentBaroSeqNumber
-              % CIRC_BUFFER_SIZE].altitude - calib_initial_altitude;
+          BARO_data baro = BARO_buffer[currentBaroSeqNumber % CIRC_BUFFER_SIZE];
+          altitude_buffer[altitude_index % ALTITUDE_BUFFER_SIZE][0] = baro.altitude - baro.base_altitude;
           altitude_buffer[altitude_index % ALTITUDE_BUFFER_SIZE][1] = currentBaroTimestamp;
 
           lastBaroSeqNumber = currentBaroSeqNumber;

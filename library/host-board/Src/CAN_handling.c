@@ -69,6 +69,15 @@ bool handleIMUData(IMU_data data) {
 
 bool handleBaroData(BARO_data data) {
 	data.altitude = altitudeFromPressure(data.pressure);
+
+#ifdef CERNIER_LEGACY_DATA
+	data.base_pressure = 93886;
+#endif
+
+	if (data.base_pressure != 0) {
+		data.base_altitude = altitudeFromPressure(data.base_pressure);
+	}
+
 #ifdef XBEE
 	return telemetry_handleBaroData(data);
 #elif defined(KALMAN)
@@ -82,7 +91,7 @@ bool handleBaroData(BARO_data data) {
 
 float can_getAltitude() {
 	//return altitude_estimate; // from TK_state_estimation
-	return kalman_z - calib_initial_altitude;
+	return kalman_z;
 }
 
 float can_getSpeed() {
@@ -143,6 +152,9 @@ void TK_can_reader() {
 				break;
 			case DATA_ID_TEMPERATURE:
 				baro[idx].temperature = ((float32_t) ((int32_t) msg.data)) / 100; // from to cDegC in DegC
+				break;
+			case DATA_ID_CALIB_PRESSURE:
+				baro[idx].base_pressure = ((float32_t) ((int32_t) msg.data)) / 100; // from cPa to hPa
 				break;
 			case DATA_ID_ACCELERATION_X:
 				imu[idx].acceleration.x = ((float32_t) ((int32_t) msg.data)) / 1000; // convert from m-g to g

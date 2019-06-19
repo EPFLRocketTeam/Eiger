@@ -46,8 +46,6 @@
  */
 #define CALIB_BARO_BUFFER_SIZE 50 // Number of measurement values taken by the calibration routine to evaluate intial altitude
 
-volatile float calib_initial_altitude;
-
 
 #define ADJUSTED_SEA_LEVEL_PRESSURE 1018.6
 #define AIR_DENSITY 1.204

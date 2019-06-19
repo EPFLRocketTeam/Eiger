@@ -26,19 +26,15 @@ void TK_state_machine (void const * argument)
   uint32_t lastImuSeqNumber = 0, lastBaroSeqNumber = 0;
   uint8_t imuIsReady = 0, baroIsReady = 0;
 
-  // Initial calibration variables
-  uint8_t calibDataCounter = 0;
-  float32_t calibData[CALIB_BARO_BUFFER_SIZE];
-
   // Declare apogee detection variables
-  float32_t max_altitude = calib_initial_altitude;
+  float32_t max_altitude = 0;
   uint32_t apogee_counter = 0;
 
   // Declare secondary recovery event detection variables
   uint32_t sec_counter = 0;
 
   // Declare touch-down event detection variables
-  float32_t td_last_alt;
+  float32_t td_last_alt = 0;
   uint32_t td_counter = 0;
 
   // TODO: Set low package data rate
@@ -90,28 +86,10 @@ void TK_state_machine (void const * argument)
           {
             if (baroIsReady)
               {
-
-                // baro calibration
-                uint8_t baroCalibReadyTrig = 0;
-                if (calibDataCounter > CALIB_BARO_BUFFER_SIZE)
+                if (baro_data->base_pressure != 0)
                   {
-                    // if buffer is full, do mean and set as initial state
-                    calib_initial_altitude = array_mean (calibData, CALIB_BARO_BUFFER_SIZE);
-                    baroCalibReadyTrig = 1;
-                  }
-                else
-                  {
-                    // if buffer isn't full yet, put altitude values in it
-                    uint8_t isCalibrated = 0;
-                    calibData[calibDataCounter++] = baro_data->altitude;
-                  }
-
-                if (baroCalibReadyTrig)
-                  {
-                	can_setFrame((int32_t) (calib_initial_altitude*1000), 51, HAL_GetTick());
                     currentState = STATE_IDLE;
                   }
-
               }
             break;
           }
@@ -168,7 +146,7 @@ void TK_state_machine (void const * argument)
             // compute apogee triggers for altitude
             if (baroIsReady)
               {
-                uint8_t minAltTrig = ((baro_data->altitude - calib_initial_altitude) > ROCKET_CST_MIN_TRIG_AGL);
+                uint8_t minAltTrig = ((baro_data->altitude - baro_data->base_altitude) > ROCKET_CST_MIN_TRIG_AGL);
                 uint8_t counterAltTrig = 0;
                 uint8_t diffAltTrig = 0;
 
@@ -217,7 +195,7 @@ void TK_state_machine (void const * argument)
                 uint8_t counterSecTrig = 0;
 
                 // update the minimum altitude detected up to this point
-                if ((baro_data->altitude - calib_initial_altitude) > ROCKET_CST_REC_SECONDARY_ALT)
+                if ((baro_data->altitude - baro_data->base_altitude) > ROCKET_CST_REC_SECONDARY_ALT)
                   {
                     // As long as the measured altitude is above the secondary recovery event altitude, keep buffer counter to 0
                     sec_counter = 0;

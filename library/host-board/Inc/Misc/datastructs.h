@@ -34,6 +34,8 @@ typedef struct
   float32_t temperature;
   float32_t pressure;
   float32_t altitude;
+  float32_t base_pressure;
+  float32_t base_altitude;
 } BARO_data;
 
 typedef struct
