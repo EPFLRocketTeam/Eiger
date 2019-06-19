@@ -17,7 +17,7 @@
 
 #define MAX_OPENING_DEG 210 // deg
 #define MIN_OPENING_DEG 0
-#define ANGLE_HELLOWORLD 10
+#define ANGLE_HELLOWORLD 2
 
 #define AB_RX_BUFFER_SIZE 64
 #define FRAME_SIZE
@@ -133,7 +133,7 @@ int aerobrakes_control_init (void)
 
 	// controller properties
 	sprintf(command, "%s%s%s%s%s%s%s", "POR10\n", "I50\n", "PP30\n", "PD3\n",
-			"LPC3000\n", "LCC3000\n", "EN\n");
+			"LPC8000\n", "LCC2250\n", "EN\n");
 	transmit_command(command, 37);
 
 	// check rx buffer content

@@ -90,6 +90,7 @@ void TK_state_machine (void const * argument)
                   {
                     currentState = STATE_IDLE;
                   }
+                currentState = STATE_IDLE;
               }
             break;
           }

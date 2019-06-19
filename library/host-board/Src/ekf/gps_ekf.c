@@ -78,7 +78,7 @@ bool kalman_handleIMUData(IMU_data imu) {
 }
 
 bool kalman_handleBaroData(BARO_data data) {
-	zdata[3] = data.altitude;
+	zdata[3] = data.altitude - data.base_altitude;
 	return true;
 }
 
@@ -241,15 +241,15 @@ void TK_kalman() {
 
 
 			//send estimate to the CAN
-			can_setFrame((int32_t) (1000 * ekf.x[0]), DATA_ID_KALMAN_X, HAL_GetTick());
-			can_setFrame((int32_t) (1000 * ekf.x[1]), DATA_ID_KALMAN_Y, HAL_GetTick());
+			//can_setFrame((int32_t) (1000 * ekf.x[0]), DATA_ID_KALMAN_X, HAL_GetTick());
+			//can_setFrame((int32_t) (1000 * ekf.x[1]), DATA_ID_KALMAN_Y, HAL_GetTick());
 			can_setFrame((int32_t) (1000 * ekf.x[2]), DATA_ID_KALMAN_Z, HAL_GetTick());
-			can_setFrame((int32_t) (1000 * ekf.x[3]), DATA_ID_KALMAN_VX, HAL_GetTick());
-			can_setFrame((int32_t) (1000 * ekf.x[4]), DATA_ID_KALMAN_VY, HAL_GetTick());
+			//can_setFrame((int32_t) (1000 * ekf.x[3]), DATA_ID_KALMAN_VX, HAL_GetTick());
+			//can_setFrame((int32_t) (1000 * ekf.x[4]), DATA_ID_KALMAN_VY, HAL_GetTick());
 			can_setFrame((int32_t) (1000 * ekf.x[5]), DATA_ID_KALMAN_VZ, HAL_GetTick());
-			can_setFrame((int32_t) (180 / 3.14 * ekf.x[6]), DATA_ID_KALMAN_ROLL, HAL_GetTick());
-			can_setFrame((int32_t) (180 / 3.14 * ekf.x[7]), DATA_ID_KALMAN_PITCH, HAL_GetTick());
-			can_setFrame((int32_t) (180 / 3.14 * ekf.x[8]), DATA_ID_KALMAN_YAW, HAL_GetTick());
+			//can_setFrame((int32_t) (180 / 3.14 * ekf.x[6]), DATA_ID_KALMAN_ROLL, HAL_GetTick());
+			//can_setFrame((int32_t) (180 / 3.14 * ekf.x[7]), DATA_ID_KALMAN_PITCH, HAL_GetTick());
+			//can_setFrame((int32_t) (180 / 3.14 * ekf.x[8]), DATA_ID_KALMAN_YAW, HAL_GetTick());
 			ekf.x[6] = 0; // force orientation pointing up
 			ekf.x[7] = 0;
 			ekf.x[8] = 0;

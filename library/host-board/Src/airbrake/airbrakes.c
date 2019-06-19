@@ -57,7 +57,7 @@ void TK_ab_controller (void const * argument)
           command_aerobrake_controller (can_getAltitude(), can_getSpeed());
 		  led_set_TK_rgb(led_AB_id, 50,50,50);
       }
-      else if (currentState > STATE_PRIMARY)
+      else if (currentState >= STATE_PRIMARY)
       {
           full_close();
 		  led_set_TK_rgb(led_AB_id, 50,50,0);

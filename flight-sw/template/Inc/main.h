@@ -157,13 +157,14 @@ void Error_Handler(void);
 	#define GPS
 	#define KALMAN
 	#define CAN_LED
+	//#define CERNIER_LEGACY_DATA
+	#define SDCARD
 #endif
 
 #ifdef BLACK_BOX_BOARD
 	#define SDCARD
 	#define SENSOR
 	#define GPS
-	// special log
 #endif
 
 #ifdef TELEMETRY_BOARD
@@ -177,10 +178,12 @@ void Error_Handler(void);
 	#define ROCKET_FSM
 	#define SENSOR
 	#define CAN_LED
+	#define SDCARD
 #endif
 
 #ifdef DEBUG_BOARD
-
+#define SENSOR
+#define SDCARD
 #endif
 
 

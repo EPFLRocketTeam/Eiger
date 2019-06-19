@@ -34,6 +34,7 @@ BARO_data BARO_buffer[CIRC_BUFFER_SIZE];
 
 float kalman_z  = 0;
 float kalman_vz = 0;
+int32_t ab_angle = 42;
 
 // wrapper to avoid fatal crashes when implementing redundancy
 int board2Idx(uint32_t board) {
@@ -71,10 +72,10 @@ bool handleBaroData(BARO_data data) {
 	data.altitude = altitudeFromPressure(data.pressure);
 
 #ifdef CERNIER_LEGACY_DATA
-	data.base_pressure = 93886;
+	data.base_pressure = 938.86;
 #endif
 
-	if (data.base_pressure != 0) {
+	if (data.base_pressure > 0) {
 		data.base_altitude = altitudeFromPressure(data.base_pressure);
 	}
 
@@ -101,6 +102,10 @@ float can_getSpeed() {
 
 uint8_t can_getState() {
 	return currentState;
+}
+
+int32_t can_getABangle() {
+	return ab_angle;
 }
 
 void sendSDcard(CAN_msg msg) {
@@ -205,6 +210,9 @@ void TK_can_reader() {
 				break;
 			case DATA_ID_KALMAN_VZ:
 				kalman_vz = ((float32_t) ((int32_t) msg.data))/1e3;
+				break;
+			case DATA_ID_AB_INC:
+				ab_angle = (int32_t) msg.data;
 				break;
 			}
 		}
