@@ -80,7 +80,9 @@ DWORD get_fattime(void)
 }
 
 /* USER CODE BEGIN Application */
-     
+void FATFS_DeInit() {
+	retSD = FATFS_UnLinkDriver(SDPath);
+}
 /* USER CODE END Application */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

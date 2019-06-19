@@ -69,7 +69,7 @@ extern FIL SDFile; /* File object for SD */
 void MX_FATFS_Init(void);
 
 /* USER CODE BEGIN Prototypes */
-
+void FATFS_DeInit();
 /* USER CODE END Prototypes */
 #ifdef __cplusplus
 }

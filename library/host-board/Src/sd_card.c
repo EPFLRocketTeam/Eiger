@@ -76,7 +76,6 @@ int sd_write(char str[], int size) {
 osStatus initSdFile ()
 {
   MX_FATFS_Init ();
-  led_sdcard_id = led_register_TK();
   led_set_TK_rgb(led_sdcard_id, 0, 50, 50);
 
   buffer_semaphore = xSemaphoreCreateBinary(); // create buffer semaphore
@@ -145,6 +144,7 @@ FRESULT sync_sd_card(FRESULT result) {
 void TK_sd_sync (void const* pvArgs)
 {
   osDelay (200);
+  led_sdcard_id = led_register_TK();
 
   if (initSdFile () != osOK)
     {
@@ -189,6 +189,14 @@ void TK_sd_sync (void const* pvArgs)
     	  led_set_TK_rgb(led_sdcard_id, 0, 50, 0);
       } else {
     	  led_set_TK_rgb(led_sdcard_id, 255, 0 ,0);
+
+    	  osDelay(100);
+    	  FATFS_DeInit();
+    	  result = initSdFile();
+    	  if (result == osOK) {
+    		  f_write (&sensorsFile, sensor_file_header, strlen (sensor_file_header), &bytes_written);
+    		  f_write (&eventsFile, events_file_header, strlen (events_file_header), &bytes_written);
+    	  }
       }
       osDelay(10);
     }
