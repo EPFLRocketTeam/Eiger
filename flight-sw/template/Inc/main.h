@@ -178,7 +178,7 @@ void Error_Handler(void);
 	#define ROCKET_FSM
 	#define SENSOR
 	#define CAN_LED
-	#define SDCARD
+	//#define SDCARD
 #endif
 
 #ifdef DEBUG_BOARD
