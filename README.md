@@ -53,13 +53,32 @@ More information about the AV system and hardware (HW) architecture can be found
 * `tools/:
   - `CAN-python`: Python scripts for monitoring and uploading data to the CAN bus the using the [PCAN-USB](https://www.peak-system.com/PCAN-USB.199.0.html?L=1).
   The drivers needs to be installed for proper operations.
-  Instead of those scripts, the software provided by Peak System (Windows only) can be used for basic CAN bus monitoring
+  Instead of those scripts, the software provided by Peak System (Windows only) can be used for basic CAN bus monitoring.
+  For more information on the scripts operation see the files headers.
+    - `canMonitor.py`: Example script to display a stream of raw messages on the CAN bus
+    - `replayLog.py`: Example script to replay CAN messages logs.
+    - `can_console.py`: Display and logs CAN messages with human readable names (see `comm_lib/protocol.txt`). Can also be used to replay CAN logs (by specifying a log file at startup, ex: `python can_console my_log_file`).
+    - `comm_lib/`: helper functions and classes for the scripts operation. `protocol.txt` contains the display name of the IDs numbers used in the CAN communication
   - `flight-plot`: Matlab plotting routine to help processing of Matterhorn 3 flight data
 
 # Usage
-## Requirements
-TODO
-## Flashing SW
-TODO
-## Developping SW
+## Useful tools
+- An up to date (3.x) python installation (for support scripts)
+- An STM32 compatible IDE (Integrated Development Environment) to develop, debug and flash code, on the Nucleo as well as the host boards.
+  The IDE of choice is [System Workbench for STM 32 (SW324STM32)](https://www.st.com/content/st_com/en/products/development-tools/software-development-tools/stm32-software-development-tools/stm32-ides/sw4stm32.html) since it is cross plateform (Atollic Studio is Windows only).
+  The recent [STM32 CubeIDE](https://www.st.com/en/development-tools/stm32cubeide.html) might also be a good option but wasn't tested.
+- [CubeMX](https://www.st.com/en/development-tools/stm32cubemx.html) to generate the initialize a STM32 code project and configure the microcontroller pinout through a handy GUI.
+- Peak System drivers to communicate with the PCAN-USB probe ([Linux](https://www.peak-system.com/fileadmin/media/linux/index.htm), [Windows](https://www.peak-system.com/Downloads.76.0.html?&L=1) and [Mac](https://www.peak-system.com/MacCAN.336.0.html?&L=1)).
+  The drivers are needed for the python tools (see `tools/CAN-python`) to work properly.
+  The [PCAN-View software](https://www.peak-system.com/PCAN-View.242.0.html?&L=1) (Windows only) can also be used for basic CAN bus monitoring
+- When working with the telemetry system (which uses a Xbee SX), the Xbee tool [XCTU](https://www.digi.com/products/embedded-systems/digi-xbee-tools/xctu) from Digi might be useful to check and the set the Xbee's configuration
+
+## Flashing embedded software
+The main steps are:
+1. Open the code project in a IDE.
+2. Wire the hardware properly (JTAG probe from ST-LINK programmer connected to the target board, with the wires in the correct order)
+3. Make sure the correct build version is selected in the IDE
+4. Build and Run on target.
+
+## Developping embedded software
 TODO
