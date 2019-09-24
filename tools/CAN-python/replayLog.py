@@ -1,3 +1,17 @@
+''' Replay CAN communication from a txt file onto a bus
+File to replay hardcoded in script: test.txt
+CAN replay format (csv file)
+time, id, code, data, timestamp
+
+time: time in s at which the packet should be sent (t=0 is programm startup)
+id: CAN_ID with which the message should be sent. Payload of message composed from the code, data, and timestamp field
+code: field in payload of CAN message 8 bit
+data: field in payload of CAN message 32 bit
+timestamp: field in payload of CAN message 24bit
+
+Author: Alexandre Devienne, June 2019
+'''
+
 from comm_lib.PCANBasic import *        ## PCAN-Basic library import
 
 import string                  ## String functions

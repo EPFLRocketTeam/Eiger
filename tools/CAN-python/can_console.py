@@ -1,3 +1,14 @@
+''' Console to monitor CAN messages
+Logs all incomming CAN message to a log file log_rx.txt (overwritten at each run)
+Display human readable names for CAN messages IDs (see comm_lib/protocol.txt)
+
+Usage:
+- Basic: python can_console.py
+- To replay a CAN log contained in my_log_file: python can_console.py my_log_file
+
+Author: Alexandre Devienne, June 2019
+'''
+
 import comm_lib.PCANBasic as PCANBasic ## PCAN-Basic library import
 import sys
 import threading
